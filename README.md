@@ -18,6 +18,10 @@ Everything in SciPDL lives within the folder:
 
 Open the .dmg file and drag the ‘PDL’ folder to your Applications folder.
 
+<img width="510" alt="Drag and Drop" src="https://github.com/PDLPorters/SciPDL/assets/15331994/ae59b053-685c-4935-8d8d-0f46c2af546f">
+
+That's it! (And the entire point of SciPDL.)
+
 *IMPORTANT*: an X11 server is also needed if you want PGPLOT graphics. One can use XQuartz or  MacPorts X11.
 Since the X11 stuff in PDL is statically linked it should work with any X11 server. If you don’t know what X11 is you probably shouldn’t be using PDL :-;
 
@@ -25,8 +29,7 @@ Since the X11 stuff in PDL is statically linked it should work with any X11 serv
 ## Running SciPDL
 
 
-**From the UNIX (Terminal) command line:
-**
+*From the UNIX (Terminal) command line:*
 If you are a bash or zsh user:
 
 `source /Applications/PDL/setup_bash  # This can go in your .bashrc startup file
@@ -68,7 +71,7 @@ You are also likely to get the error:
 
 If you do then click ‘Edit’ button in the dialog to open it in Script Editor and then just hit ‘Save’ in the menu. Then when you re-launch the app you should get a dialog to allow the app to do it’s thing.
 
-(Note these are implemented via Applescripts)
+(Note these are implemented via Applescripts, if you can't get them to work it is no big deal. Just run `pdl` from the command line.)
 
 
 # Folder locations
@@ -78,7 +81,7 @@ Everything is installed in `/Applications/PDL`
 
 After running the setup script one should be able to use `cpan -i` to install perl modules in the normal way (they get installed under `/Applications/PDL` with the perl).
   
-The graphics library libpgplot is installed in `/Applications/PDL/pgplot`, libraries are in `/Applications/PDL/lib` and executables are in `/Applications/PDL/bin`. Usage from PDL should be transparent.
+The `pgplot` graphics library libpgplot is installed in `/Applications/PDL/pgplot`, libraries are in `/Applications/PDL/lib` and executables are in `/Applications/PDL/bin`. Usage from PDL should be transparent. You can also build and link your own C and Fortran programs against these `pgplot` libraries if you wish and it ought to work.
 
 
 
