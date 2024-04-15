@@ -1,5 +1,7 @@
 # SciPDL
-This is a repository for creating SciPDL distributions (easy install of PDL on MacOS)
+This is a repository for releasing SciPDL distributions (easy install of PDL on MacOS).
+
+Right now this is just a placeholder repo for uploading and releasing the DMGs.
 
 ----
 
