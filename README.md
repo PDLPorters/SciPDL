@@ -1,11 +1,11 @@
 # SciPDL
 This is a repository for releasing SciPDL distributions (easy install of PDL on MacOS).
 
-Right now this is just a placeholder repo for uploading and releasing the DMGs.
+Right now this is just a placeholder repo for uploading and releasing the DMGs. I hope to add the code (a shell script) to build the DMG FWIW as soon as I have tidied it up.
 
 ----
 
-Karl Glazebrook, 14/4/2024.
+*Karl Glazebrook, 15/4/2024*
 
 Welcome to SciPDL! SciPDL is a drag and drop installer for PDL on the Mac. SciPDL now includes its own version of perl in order to work across multiple versions of Mac OS X and a variety of environments (note old versions used the system perl which led to instability between OS updates).
 
