@@ -4,6 +4,7 @@ This is a repository for releasing SciPDL distributions (easy install of PDL on 
 Right now this is just a placeholder repo for uploading and releasing the DMGs. I hope to add the code (a shell script) to build the DMG FWIW as soon as I have tidied it up.
 
 So please download a [release.](https://github.com/PDLPorters/SciPDL/releases)
+So please download a [release.](./releases)
 
 ----
 
