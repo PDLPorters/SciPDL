@@ -91,6 +91,8 @@ The `pgplot` graphics library libpgplot is installed in `/Applications/PDL/pgplo
 
 # Contents
 
+The repo contains the various scripts and bits I use to build the DMG.
+
 `build_scipdl.sh` is a shell script that builds SciPDL in /Applications/PDL on a Mac (well my Mac) from sources
 
 `go_dmg` is a shell script that builds the DMG file and signs/notarises it
@@ -103,3 +105,4 @@ The `pgplot` graphics library libpgplot is installed in `/Applications/PDL/pgplo
 
 `DMG-Background.png` is the background image in the DMG
 
+`Apps` folder contains the `pdl [here]` and `pdl [home]` Applescript apps that go in the distribution.
