@@ -1,0 +1,4 @@
+#!/bin/bash
+# Used by 'pdl> [here]' and 'pdl> [home]' Mac Apps to launch PDL under bash
+source /Applications/PDL/setup_bash
+pdl

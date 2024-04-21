@@ -1,0 +1,6 @@
+# Set SciPDL environment variables for bash users
+PATH=/Applications/PDL/bin:$PATH
+export PATH
+# Just in case user has it set, if not then not needed.
+PGPLOT_DIR=/Applications/PDL/pgplot
+export PGPLOT_DIR

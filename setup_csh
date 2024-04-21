@@ -1,0 +1,5 @@
+# Set SciPDL environment variables for csh/tcsh users
+setenv PATH /Applications/PDL/bin:$PATH
+rehash
+# Just in case user has it set, if not then not needed.
+setenv PGPLOT_DIR /Applications/PDL/pgplot

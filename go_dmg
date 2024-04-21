@@ -1,0 +1,54 @@
+#! /bin/bash
+
+# Make a new DMG file for SciPDL based on local /Applications/PDL/...
+# This is only likely to work on Karl's Mac
+
+version=2.084
+
+# Folder where to put the intermediate files and the final DMG
+DEST=/Users/karl/Downloads
+
+# Folder where to find the 'create-dmg' script from  https://github.com/create-dmg/create-dmg
+CREATE_DMG=../create-dmg
+
+# OK get started and nuke any previous versions!
+
+rm $DEST/SciPDL-v$version.dmg
+rm -fr $DEST/SciPDL-dist
+mkdir $DEST/SciPDL-dist
+
+# Note ditto seems better behaved than cp for this stuff on MacOS
+
+ditto /Applications/PDL $DEST/SciPDL-dist/PDL
+ditto README_dmg.rtfd $DEST/SciPDL-dist/README.rtfd
+ditto README_dmg.rtfd $DEST/SciPDL-dist/PDL/README.rtfd
+
+# Here is a magic find command to find all regular file executables and bundles and sign them
+# Note the --options runtime on the codesign is important for this to work! Takes ~1min for ~200 relevant files
+# Note many files ought to be codesigned already as this happens in previous compilation, so use -f to avoid
+# notarisation errors
+
+find $DEST/SciPDL-dist/ -type f \( -name "*.bundle" -o  -perm +111 \) -exec chmod u+w {} \;
+find $DEST/SciPDL-dist/ -type f \( -name "*.bundle" -o  -perm +111 \) -exec codesign -f -s "Developer ID Application" --options runtime {} \;
+
+# This creates the DMG and signs it with my Apple Developer credentials in the MacOS keychain and
+# notarises it via Apple's servers
+
+$CREATE_DMG/create-dmg \
+--volname "SciPDL for PDL $version" \
+--background "DMG-Background.png" \
+--window-pos 200 120 \
+--window-size 640 530 \
+--icon-size 70 \
+--icon PDL 170 260 \
+--icon README.rtfd 170 370 \
+--app-drop-link 480 260 \
+--codesign "Developer ID Application" \
+--notarize "AC_PASSWORD" \
+$DEST/SciPDL-v$version.dmg \
+$DEST/SciPDL-dist
+
+
+# Useful notarytool commands
+# Use a command like this to fetch the log
+# xcrun notarytool log -p "AC_PASSWORD"  18a5f61f-7cf7-4765-bbe5-5ac03dce311e
