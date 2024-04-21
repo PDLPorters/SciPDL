@@ -92,3 +92,16 @@ The `pgplot` graphics library libpgplot is installed in `/Applications/PDL/pgplo
 # Contents
 
 TBD ...
+
+`build_scipdl.sh` is a shell script that builds SciPDL in /Applications/PDL on a Mac (well my Mac) from sources
+
+`go_dmg` is a shell script that builds the DMG file and signs/notarises it
+
+`gfortran-static` is a shell front end to `gfortran` that makes the buids static
+
+`setup_bash` and `setup_csh` are the scripts that set up the user paths for SciPDL that go in the distrubution
+
+`README_dmg.rtfd` is the RTF README file that goes in the DMG.
+
+`DMG-Background.png` is the background image in the DMG
+
