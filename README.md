@@ -1,9 +1,9 @@
 # SciPDL
 This is a repository for releasing SciPDL distributions (easy install of PDL on MacOS).
 
-Right now this is just a placeholder repo for uploading and releasing the DMGs. I hope to add the code (a shell script) to build the DMG FWIW as soon as I have tidied it up.
+The main purpose of this is to hold the releases, so please download a [release.](../../releases)
 
-So please download a [release.](../../releases)
+I have included the source scripts that do all the building FWIW but these will probably only work on my Mac. But good luck if you want to play with this!
 
 ----
 
