@@ -108,3 +108,5 @@ The repo contains the various scripts and bits I use to build the DMG.
 `DMG-Background.png` is the background image in the DMG
 
 `Apps` folder contains the `pdl [here]` and `pdl [home]` Applescript apps that go in the distribution.
+
+`go_pdl` is a shell script that launches an interactive PDL session that the above Applescripts use.
