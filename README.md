@@ -3,6 +3,8 @@ This is a repository for releasing SciPDL distributions (easy install of PDL on 
 
 The main purpose of this is to hold the releases, so please download a [release.](../../releases)
 
+These are `.dmg` files that you double click to open and then do a drag and drop to install PDL.
+
 I have included the source scripts that do all the building FWIW but these will probably only work on my Mac. But good luck if you want to play with this!
 
 ----
