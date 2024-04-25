@@ -12,9 +12,6 @@
 
 set -e # Stop on error
 
-# Remove folders and downloads.
-#rm -fr perl-5.38.2 PGPLOT-2.28 gsl-2.7.1 fftw-3.3.10  PGPLOT-2.28 PDL-2.084 PDL-FFTW3-0.18 Astro-FITS-CFITSIO-1.18 cfitsio-4.3.1 /Applications/PDL ~/.cpan
-
 HERE=$PWD
 
 # Add GIT directory to PATH to allow pick up of misc scripts.
@@ -33,13 +30,13 @@ if true
 then 
 
 curl -OL https://www.cpan.org/src/5.0/perl-5.38.2.tar.gz
-curl -OL https://cpan.metacpan.org/authors/id/E/ET/ETJ/PGPLOT-2.28.tar.gz 
+curl -OL https://cpan.metacpan.org/authors/id/E/ET/ETJ/PGPLOT-2.29.tar.gz 
 curl -OL https://mirror.freedif.org/GNU/gsl/gsl-2.7.1.tar.gz
-curl -OL https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/cfitsio-4.3.1.tar.gz
+curl -OL https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/cfitsio-4.4.0.tar.gz
 curl -OL https://cpan.metacpan.org/authors/id/P/PR/PRATZLAFF/Astro-FITS-CFITSIO-1.18.tar.gz
-curl -OL https://cpan.metacpan.org/authors/id/E/ET/ETJ/PDL-2.084.tar.gz
+curl -OL https://cpan.metacpan.org/authors/id/E/ET/ETJ/PDL-2.088.tar.gz
 curl -OL https://www.fftw.org/fftw-3.3.10.tar.gz
-curl -OL https://cpan.metacpan.org/authors/id/E/ET/ETJ/PDL-FFTW3-0.18.tar.gz
+curl -OL https://cpan.metacpan.org/authors/id/E/ET/ETJ/PDL-FFTW3-0.19.tar.gz
 curl -OL https://www.dropbox.com/s/ib3q8pcgepyiwg9/pgplot531.tar.gz
 
 cp $HERE/patches/pgplot2.patch .
@@ -118,8 +115,8 @@ cpan -i Devel::CheckLib
 
 export PGPLOT_DEV=/NULL # Suppress interactive tests
 
-tar xvf PGPLOT-2.28.tar.gz
-cd PGPLOT-2.28
+tar xvf PGPLOT-2.29.tar.gz
+cd PGPLOT-2.29
 perl Makefile.PL
 make
 # Now super ugly hack to make the bundle static!
@@ -161,8 +158,8 @@ echo  +++++++++++++++++++++++++++++ Install cfitsio  +++++++++++++++++++++++++++
 
 # Noting cpan -i Alien::CFITSIO does not seem to work on my M1 Monterey machine, missing SSL stuff?
 
-tar xvf cfitsio-4.3.1.tar.gz
-cd cfitsio-4.3.1   
+tar xvf cfitsio-4.4.0.tar.gz
+cd cfitsio-4.4.0   
 ./configure prefix=/Applications/PDL CC=gcc
 make
 # Run test progs
@@ -201,8 +198,8 @@ echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # Note cpan -i ETJ/PDL-2.084.tar.gz also works but do it this way so I can look at the leftovers
 # from the build easily
 
-tar xvfz PDL-2.084.tar.gz     
-cd PDL-2.084
+tar xvfz PDL-2.088.tar.gz     
+cd PDL-2.088
 perl Makefile.PL
 make
 
@@ -246,8 +243,8 @@ echo  +++++++++++++++++++++++++++++ Install PDL::FFTW3  ++++++++++++++++++++++++
 
 #cpan -i PDL::FFTW3 # Does not seem to work
 
-tar xvf PDL-FFTW3-0.18.tar.gz
-cd PDL-FFTW3-0.18
+tar xvf PDL-FFTW3-0.19.tar.gz
+cd PDL-FFTW3-0.19
 # Patch the Makefile.PL to find the libs in the right place
 patch -i ../pdl-fftw3-0.18.patch
 perl Makefile.PL
