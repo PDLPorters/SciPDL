@@ -9,7 +9,7 @@ version=2.088
 DEST=/Users/karl/Downloads
 
 # Folder where to find the 'create-dmg' script from  https://github.com/create-dmg/create-dmg
-CREATE_DMG=../create-dmg
+CREATE_DMG=~/Dropbox/Software/SciPDL-Own-Perl/create-dmg
 
 # OK get started and nuke any previous versions!
 
@@ -33,6 +33,7 @@ find $DEST/SciPDL-dist/ -type f \( -name "*.bundle" -o  -perm +111 \) -exec code
 
 # This creates the DMG and signs it with my Apple Developer credentials in the MacOS keychain and
 # notarises it via Apple's servers
+# Using create-dmg version 1.2.0 from https://github.com/create-dmg/create-dmg
 
 $CREATE_DMG/create-dmg \
 --volname "SciPDL for PDL $version" \
