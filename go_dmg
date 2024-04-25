@@ -3,7 +3,7 @@
 # Make a new DMG file for SciPDL based on local /Applications/PDL/...
 # This is only likely to work on Karl's Mac
 
-version=2.084
+version=2.088
 
 # Folder where to put the intermediate files and the final DMG
 DEST=/Users/karl/Downloads
