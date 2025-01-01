@@ -31,8 +31,8 @@ then
 
 curl -OL https://www.cpan.org/src/5.0/perl-5.38.2.tar.gz
 curl -OL https://cpan.metacpan.org/authors/id/E/ET/ETJ/PGPLOT-2.29.tar.gz 
-curl -OL https://mirror.freedif.org/GNU/gsl/gsl-2.7.1.tar.gz
-curl -OL https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/cfitsio-4.4.0.tar.gz
+curl -OL https://ftp.gnu.org/gnu/gsl/gsl-2.7.1.tar.gz
+curl -OL https://github.com/HEASARC/cfitsio/archive/refs/tags/cfitsio4_4_0_20240228.tar.gz
 curl -OL https://cpan.metacpan.org/authors/id/P/PR/PRATZLAFF/Astro-FITS-CFITSIO-1.18.tar.gz
 curl -OL https://cpan.metacpan.org/authors/id/E/ET/ETJ/PDL-2.088.tar.gz
 curl -OL https://www.fftw.org/fftw-3.3.10.tar.gz
@@ -158,8 +158,8 @@ echo  +++++++++++++++++++++++++++++ Install cfitsio  +++++++++++++++++++++++++++
 
 # Noting cpan -i Alien::CFITSIO does not seem to work on my M1 Monterey machine, missing SSL stuff?
 
-tar xvf cfitsio-4.4.0.tar.gz
-cd cfitsio-4.4.0   
+tar xvf cfitsio4_4_0_20240228.tar.gz
+cd cfitsio-cfitsio4_4_0_20240228/   
 ./configure prefix=/Applications/PDL CC=gcc
 make
 # Run test progs
