@@ -1,3 +1,3 @@
 #!/bin/bash
-/usr/local/gfortran/bin/gfortran -static-libgfortran -static-libgcc $@
+/usr/local/bin/gfortran -static-libgfortran -static-libgcc $@
 
