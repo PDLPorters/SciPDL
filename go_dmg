@@ -13,9 +13,16 @@ CREATE_DMG=~/Dropbox/Software/SciPDL-Own-Perl/create-dmg
 
 # OK get started and nuke any previous versions!
 
+HERE=$PWD
 rm $DEST/SciPDL-v$version.dmg
 rm -fr $DEST/SciPDL-dist
 mkdir $DEST/SciPDL-dist
+
+# Create a Tar file as well for archiving without signature/notarization complexities.
+
+cd /Applications
+tar cfz $DEST/SciPDL-v$version.tar.gz PDL
+cd $HERE
 
 # Note ditto seems better behaved than cp for this stuff on MacOS
 
@@ -30,6 +37,10 @@ ditto README_dmg.rtfd $DEST/SciPDL-dist/PDL/README.rtfd
 
 find $DEST/SciPDL-dist/ -type f \( -name "*.bundle" -o  -perm +111 \) -exec chmod u+w {} \;
 find $DEST/SciPDL-dist/ -type f \( -name "*.bundle" -o  -perm +111 \) -exec codesign -f -s "Developer ID Application" --options runtime {} \;
+
+# This gives an entitlement to the perl binary so it can load dynamic libraries even if not signed (e.g. the local users!)
+codesign -f --entitlements entitlements.plist -s "Developer ID Application" --options runtime  $DEST/SciPDL-dist/PDL/bin/perl
+
 
 # This creates the DMG and signs it with my Apple Developer credentials in the MacOS keychain and
 # notarises it via Apple's servers
