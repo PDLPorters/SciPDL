@@ -12,6 +12,14 @@
 
 set -e # Stop on error
 
+# Refuse to run if anaconda is present and activated
+if [[ -n "$CONDA_PREFIX" && -d "$CONDA_PREFIX" ]]; then
+    echo "Anaconda is activated. CONDA_PREFIX: $CONDA_PREFIX"
+    echo "Please use 'conda deactivate' and try again. Believe me having Anaconda in your"
+    echo "path is a big bag of hurt for this build."
+    exit 1
+fi
+
 HERE=$PWD
 
 # Add GIT directory to PATH to allow pick up of misc scripts.
@@ -74,6 +82,9 @@ echo Hello
 fi ### End of the code skip
 
 
+# Ensure cpan does not prompt if not configured.
+export PERL_MM_USE_DEFAULT=1
+
 echo +++++++++++++++++++++++++++++ build perl  +++++++++++++++++++++++++++++
 
 tar xvfz perl-5.38.2.tar.gz
@@ -84,7 +95,6 @@ make
 make test
 make install 
 cd ..
-
 
 # Update the PATH
 

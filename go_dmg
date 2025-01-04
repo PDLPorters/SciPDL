@@ -41,7 +41,6 @@ find $DEST/SciPDL-dist/ -type f \( -name "*.bundle" -o  -perm +111 \) -exec code
 # This gives an entitlement to the perl binary so it can load dynamic libraries even if not signed (e.g. the local users!)
 codesign -f --entitlements entitlements.plist -s "Developer ID Application" --options runtime  $DEST/SciPDL-dist/PDL/bin/perl
 
-
 # This creates the DMG and signs it with my Apple Developer credentials in the MacOS keychain and
 # notarises it via Apple's servers
 # Using create-dmg version 1.2.0 from https://github.com/create-dmg/create-dmg
