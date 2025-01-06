@@ -1,0 +1,210 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2638
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fswiss\fcharset0 Helvetica-Bold;\f2\fswiss\fcharset0 Helvetica-BoldOblique;
+\f3\fswiss\fcharset0 Helvetica-Oblique;\f4\fmodern\fcharset0 Courier;\f5\fmodern\fcharset0 Courier-Oblique;
+\f6\fnil\fcharset0 Menlo-Regular;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+{\*\expandedcolortbl;;\csgray\c0;}
+\paperw12240\paperh15840\margl1440\margr1440\vieww21100\viewh17180\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0  
+\fs28 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f1\b\fs48 \cf0 \ul \ulc0 SciPDL version for PDL 2.088\
+
+\f0\b0\fs28 \ulnone \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f2\i\b \cf0 Karl Glazebrook, 25/4/2024. karlglazebrook  [-at-]  mac   [-dot-]  com\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\i0\b0 \cf0 (ANZAC day edition!)\
+\
+Welcome to SciPDL! SciPDL is a drag and drop installer for PDL on the Mac. SciPDL now includes its own version of perl in order to work across multiple versions of Mac OS X and a variety of environments (note old versions used the system perl which led to instability between OS updates).\
+\
+SciPDL is a \'91kitchen sink\'92 type installer, you get everything you need in one bug bundle to start PDL work. If you prefer a more
+\f3\i  \'e0 la carte 
+\f0\i0 approach we suggest you build PDL yourself or use a package management system.\
+\
+Everything in SciPDL lives within the folder:\
+\
+ 
+\fs24 {{\NeXTGraphic Pasted Graphic 2.tiff \width3020 \height440 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}¬}
+\fs28  \
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f1\b\fs36 \cf0 \ul Installation\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\b0\fs28 \cf0 \ulnone \
+Open the 
+\f1\b .dmg
+\f0\b0  file and drag the \'91PDL\'92 folder to your Applications folder.\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f1\b \cf0 IMPORTANT
+\f0\b0 : an X11 server is also needed if you want PGPLOT graphics. One can use XQuartz or  {\field{\*\fldinst{HYPERLINK "https://www.macports.org"}}{\fldrslt MacPorts}} X11.\
+Since the X11 stuff in PDL is statically linked it 
+\f3\i should
+\f0\i0  work with any X11 server. If you don\'92t know what X11 is you probably shouldn\'92t be using PDL :-;\
+\
+SciPDL v2.088 is built on MacOS 12.4 (Monterey) and has been tested on 12.5 (Ventura) and 12.6 (Sonoma) in both Apple Silicon (ARM) and Intel builds.\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f1\b\fs36 \cf0 \ul Running SciPDL\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\b0\fs28 \cf0 \ulnone \
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f2\i\b \cf0 From the UNIX (Terminal) command line:\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f3\b0 \cf0 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\i0 \cf0 If you are a bash or zsh user:\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f4 \cf0 source /Applications/PDL/setup_bash  # This can go in your .bashrc startup file\
+pdl
+\f0 \
+\
+If you are a csh user:\
+\
+
+\f4 source /Applications/PDL/setup_csh  # This can go in your .cshrc startup file\
+pdl\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f5\i \cf0 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\i0 \cf0 Alternatively simply run\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f4 \cf0 /Applications/PDL/go_pdl\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0 \cf0 \
+to launch a PDL command line session \
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f2\i\b \cf0 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f1\i0\fs36 \cf0 \ul Convenience Apps\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f3\i\b0\fs28 \cf0 \ulnone \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f2\b \cf0 To launch pdl from the Finder (utility apps in PDL folder):\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\i0\b0 \cf0 \
+The app:\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\fs24 \cf0 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 {{\NeXTGraphic Pasted Graphic 3.tiff \width1900 \height1680 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}¬}\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0  \
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\fs28 \cf0 will launch a Terminal window in your home folder with PDL running.\
+\
+The app:\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f3\i \cf0 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\i0\fs24 \cf0 {{\NeXTGraphic Pasted Graphic 4.tiff \width1820 \height1980 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}¬}\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 \
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\fs28 \cf0 will run PDL in the current Finder window folder. For this to work drag the app in to your Finder toolbar (right click on the tool bar and select \'91
+\f3\i Customise toolbar
+\f0\i0 \'92)\
+\
+You will be asked if you wish to allow the app to run and whether to allow it to control Terminal. Say yes to both of these! \
+\
+You are also likely to get the error:\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\fs24 \cf0 {{\NeXTGraphic Pasted Graphic.png \width7440 \height7000 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}¬}\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\fs28 \cf0 \
+If you do then click \'91Edit\'92 button in the dialog to open it in Script Editor and then just hit \'91Save\'92 in the menu. Then when you re-launch the app you should get a dialog to allow the app to do it\'92s thing.\
+\
+(Note these are implemented via Applescripts)\
+\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f1\b\fs36 \cf0 \ul What SciPDL contains\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\b0\fs28 \cf0 \ulnone \
+SciPDL contains:\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f4 \cf0 PDL 2.088 \
+perl 5.38.2 
+\f0 \
+\
+Version numbers of some other major components:\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+
+\f6\fs22 \cf2 \CocoaLigature0 Astro-FITS-CFITSIO-1.18\
+ExtUtils-F77-1.26\
+PDL-FFTW3-0.19\
+cfitsio-4.4.0\
+fftw-3.3.10\
+gsl-v2.7.1\
+perl5-PGPLOT-2.29\
+libpgplot5.3.1\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs28 \cf0 \CocoaLigature1 After running the setup script one should be able to use \'91
+\f4 cpan -i
+\f0 \'92 to install perl modules in the normal way (they get installed under /
+\f4 Applications/PDL
+\f0  with the perl).\
+  \
+The graphics library libpgplot is installed in 
+\f4 /Applications/PDL/pgplot
+\f0 , libraries are in 
+\f4 /Applications/PDL/lib
+\f0  and executables are in 
+\f4 /Applications/PDL/bin
+\f0 . Usage from PDL should be transparent.\
+\
+\
+\
+\
+\
+\
+\
+}

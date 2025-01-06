@@ -9,7 +9,7 @@ I have included the source scripts that do all the building FWIW but these will 
 
 ----
 
-*Current version for PDL v2.093, Karl Glazebrook, 6/1/2025*
+*Karl Glazebrook, 15/4/2024*
 
 Welcome to SciPDL! SciPDL is a drag and drop installer for PDL on the Mac. SciPDL now includes its own version of perl in order to work across multiple versions of Mac OS X and a variety of environments (note old versions used the system perl which led to instability between OS updates).
 
@@ -29,7 +29,9 @@ Open the .dmg file and drag the ‘PDL’ folder to your Applications folder.
 That's it! (And the entire point of SciPDL.)
 
 *IMPORTANT*: an X11 server is also needed if you want PGPLOT graphics. One can use XQuartz or  MacPorts X11.
-Since the X11 stuff in PDL is statically linked it should work with any X11 server. 
+Since the X11 stuff in PDL is statically linked it should work with any X11 server. If you don’t know what X11 is you probably shouldn’t be using PDL :-;
+
+
 ## Running SciPDL
 
 
@@ -87,30 +89,9 @@ After running the setup script one should be able to use `cpan -i` to install pe
   
 The `pgplot` graphics library libpgplot is installed in `/Applications/PDL/pgplot`, libraries are in `/Applications/PDL/lib` and executables are in `/Applications/PDL/bin`. Usage from PDL should be transparent. You can also build and link your own C and Fortran programs against these `pgplot` libraries if you wish and it ought to work.
 
-# Perl module versions
 
-The current version numbers of the important stuff within SciPDL are:
 
-```
-VERSION_PDL=2.093
-VERSION_PERL=5.40.0
-VERSION_PGPLOT=2.35
-VERSION_EXTUTILS_F77=1.26
-VERSION_GSL=2.8
-VERSION_CFITSIO=4.5.0
-VERSION_ASTRO_FITSIO=1.18
-VERSION_ASTRO_FITS_HEADER=3.09
-VERSION_FFTW=3.3.10
-VERSION_PDL_FFTW3=0.20
-```
-
-# Minor caveats
-
-Because this is MacOS the code is all signed and notarised and has a hardened runtime. So it is quite locked down.
-
-In the latest releases I have found a way to give the perl binary a library loading 'entitlement', so installing your own stuff on top of SciPDL (e.g. with `cpan -i`) will work. However see this [caveat.](../../issues/3)
-
-# Github repository contents
+# Contents
 
 The repo contains the various scripts and bits I use to build the DMG.
 
@@ -129,10 +110,3 @@ The repo contains the various scripts and bits I use to build the DMG.
 `Apps` folder contains the `pdl [here]` and `pdl [home]` Applescript apps that go in the distribution.
 
 `go_pdl` is a shell script that launches an interactive PDL session that the above Applescripts use.
-
-`patches/` is a folder containing various patches I need to build stuff for SciPDL.
-
-There are also folders named, for example, `v2.088/` that contain older versions of the builder scripts used for previos releases.
-
-
-

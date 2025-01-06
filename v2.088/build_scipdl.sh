@@ -34,32 +34,21 @@ cd ~/Downloads/build
 
 echo +++++++++++++++++++++++++++++ Fetch Sources  +++++++++++++++++++++++++++++
 
-VERSION_PDL=2.093
-VERSION_PERL=5.40.0
-VERSION_PGPLOT=2.35
-VERSION_EXTUTILS_F77=1.26
-VERSION_GSL=2.8
-VERSION_CFITSIO=4.5.0
-VERSION_ASTRO_FITSIO=1.18
-VERSION_ASTRO_FITS_HEADER=3.09
-VERSION_FFTW=3.3.10
-VERSION_PDL_FFTW3=0.20
-
 if true
 then 
 
-curl -OL https://www.cpan.org/src/5.0/perl-$VERSION_PERL.tar.gz
-curl -OL https://cpan.metacpan.org/authors/id/E/ET/ETJ/PGPLOT-$VERSION_PGPLOT.tar.gz 
-curl -OL https://ftp.gnu.org/gnu/gsl/gsl-$VERSION_GSL.tar.gz
-curl -OL https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/cfitsio-$VERSION_CFITSIO.tar.gz
-curl -OL https://cpan.metacpan.org/authors/id/P/PR/PRATZLAFF/Astro-FITS-CFITSIO-$VERSION_ASTRO_FITSIO.tar.gz
-curl -OL https://cpan.metacpan.org/authors/id/E/ET/ETJ/PDL-$VERSION_PDL.tar.gz
-curl -OL https://www.fftw.org/fftw-$VERSION_FFTW.tar.gz
-curl -OL https://cpan.metacpan.org/authors/id/E/ET/ETJ/PDL-FFTW3-$VERSION_PDL_FFTW3.tar.gz
+curl -OL https://www.cpan.org/src/5.0/perl-5.38.2.tar.gz
+curl -OL https://cpan.metacpan.org/authors/id/E/ET/ETJ/PGPLOT-2.29.tar.gz 
+curl -OL https://ftp.gnu.org/gnu/gsl/gsl-2.7.1.tar.gz
+curl -OL https://github.com/HEASARC/cfitsio/archive/refs/tags/cfitsio4_4_0_20240228.tar.gz
+curl -OL https://cpan.metacpan.org/authors/id/P/PR/PRATZLAFF/Astro-FITS-CFITSIO-1.18.tar.gz
+curl -OL https://cpan.metacpan.org/authors/id/E/ET/ETJ/PDL-2.088.tar.gz
+curl -OL https://www.fftw.org/fftw-3.3.10.tar.gz
+curl -OL https://cpan.metacpan.org/authors/id/E/ET/ETJ/PDL-FFTW3-0.19.tar.gz
 curl -OL https://www.dropbox.com/s/ib3q8pcgepyiwg9/pgplot531.tar.gz
 
 cp $HERE/patches/pgplot2.patch .
-cp $HERE/patches/pdl-fftw3-0.20.patch .
+cp $HERE/patches/pdl-fftw3-0.18.patch .
 cp $HERE/patches/AstroFitsIO.patch .
 
 fi
@@ -98,8 +87,8 @@ export PERL_MM_USE_DEFAULT=1
 
 echo +++++++++++++++++++++++++++++ build perl  +++++++++++++++++++++++++++++
 
-tar xvfz perl-$VERSION_PERL.tar.gz
-cd perl-$VERSION_PERL
+tar xvfz perl-5.38.2.tar.gz
+cd perl-5.38.2
 ./Configure -de -Dcc=gcc -Dprefix=/Applications/PDL
 make
 # All tests OK!
@@ -128,7 +117,7 @@ rm -fr pgplotsrc
 
 echo  +++++++++++++++++++++++++++++ Install ExtUtils::F77 +++++++++++++++++++++++++++++
 
-cpan -i ETJ/ExtUtils-F77-$VERSION_EXTUTILS_F77.tar.gz
+cpan -i ETJ/ExtUtils-F77-1.26.tar.gz
 
 echo  +++++++++++++++++++++++++++++ Install perl-PGPLOT  +++++++++++++++++++++++++++++
 
@@ -136,8 +125,8 @@ cpan -i Devel::CheckLib
 
 export PGPLOT_DEV=/NULL # Suppress interactive tests
 
-tar xvf PGPLOT-$VERSION_PGPLOT.tar.gz
-cd PGPLOT-$VERSION_PGPLOT
+tar xvf PGPLOT-2.29.tar.gz
+cd PGPLOT-2.29
 perl Makefile.PL
 make
 # Now super ugly hack to make the bundle static!
@@ -166,8 +155,8 @@ echo  +++++++++++++++++++++++++++++ Install GSL +++++++++++++++++++++++++++++
 # Note I can't get Alien to work as it needs Net:SSLeay that won't install correctly
 # cpan -i Alien::GSL 
 
-tar xvf gsl-$VERSION_GSL.tar.gz
-cd gsl-$VERSION_GSL 
+tar xvf gsl-2.7.1.tar.gz
+cd gsl-2.7.1 
 # This works around what appears to be an optimisation bug in ARM64 gcc 12.1
 CFLAGS='-g -O' ./configure --disable-shared prefix=/Applications/PDL
 make
@@ -179,8 +168,8 @@ echo  +++++++++++++++++++++++++++++ Install cfitsio  +++++++++++++++++++++++++++
 
 # Noting cpan -i Alien::CFITSIO does not seem to work on my M1 Monterey machine, missing SSL stuff?
 
-tar xvf cfitsio-$VERSION_CFITSIO.tar.gz
-cd cfitsio-$VERSION_CFITSIO/   
+tar xvf cfitsio4_4_0_20240228.tar.gz
+cd cfitsio-cfitsio4_4_0_20240228/   
 ./configure prefix=/Applications/PDL CC=gcc
 make
 # Run test progs
@@ -199,8 +188,8 @@ echo  +++++++++++++++++++++++++++++ Install Astro::FITS modules  +++++++++++++++
 
 # Can't use CPAN as it wants to do Alien::CFITSIO
 
-tar xvf Astro-FITS-CFITSIO-$VERSION_ASTRO_FITSIO.tar.gz 
-cd Astro-FITS-CFITSIO-$VERSION_ASTRO_FITSIO
+tar xvf Astro-FITS-CFITSIO-1.18.tar.gz 
+cd Astro-FITS-CFITSIO-1.18
 patch -i ../AstroFitsIO.patch
 # Note adding of -lcurl and lib/incl dirs
 perl Makefile.PL LIBS="-Wl,-no_compact_unwind -L/Applications/PDL/lib -lcfitsio -lcurl -lm" INC="-I/Applications/PDL/include"
@@ -209,7 +198,7 @@ make test
 make install
 cd ..
 
-cpan -i GSB/Astro-FITS-Header-$VERSION_ASTRO_FITS_HEADER.tar.gz
+cpan -i GSB/Astro-FITS-Header-3.09.tar.gz
 
 
 echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -219,8 +208,8 @@ echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # Note cpan -i ETJ/PDL-2.084.tar.gz also works but do it this way so I can look at the leftovers
 # from the build easily
 
-tar xvfz PDL-$VERSION_PDL.tar.gz     
-cd PDL-$VERSION_PDL
+tar xvfz PDL-2.088.tar.gz     
+cd PDL-2.088
 perl Makefile.PL
 make
 
@@ -245,8 +234,8 @@ echo  +++++++++++++++++++++++++++++ Install libfftw  +++++++++++++++++++++++++++
 
 #cpan -i Alien::FFTW3 # does not work as can't seem to install IO:: modules
 
-tar xvf  fftw-$VERSION_FFTW.tar.gz
-cd fftw-$VERSION_FFTW
+tar xvf  fftw-3.3.10.tar.gz
+cd fftw-3.3.10
 # Install double precision library
 # Note need to set F77 explicitly for some weird reason
 ./configure prefix=/Applications/PDL
@@ -264,10 +253,10 @@ echo  +++++++++++++++++++++++++++++ Install PDL::FFTW3  ++++++++++++++++++++++++
 
 #cpan -i PDL::FFTW3 # Does not seem to work
 
-tar xvf PDL-FFTW3-$VERSION_PDL_FFTW3.tar.gz
-cd PDL-FFTW3-$VERSION_PDL_FFTW3
+tar xvf PDL-FFTW3-0.19.tar.gz
+cd PDL-FFTW3-0.19
 # Patch the Makefile.PL to find the libs in the right place
-patch -i ../pdl-fftw3-0.20.patch
+patch -i ../pdl-fftw3-0.18.patch
 perl Makefile.PL
 make
 make test

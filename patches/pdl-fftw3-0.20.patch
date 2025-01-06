@@ -1,0 +1,23 @@
+--- Makefile.PL.orig	2025-01-05 21:57:27
++++ Makefile.PL	2025-01-05 21:59:12
+@@ -20,7 +20,7 @@
+     }
+     $cflags = Alien::FFTW3->cflags;
+     $libs   = Alien::FFTW3->libs;
+-} else {
++} elsif (0) { # KG don't run this test as png-config does not exist by default on MacOS
+     print "Alien::FFTW3 not found.  Using pkg-config instead...\n";
+ 
+     require IPC::Run;
+@@ -45,6 +45,11 @@
+ my @package = (qw(fftw3.pd FFTW3 PDL::FFTW3), undef, 1);
+ my %descriptor = pdlpp_stdargs(\@package);
+ 
++# KG addition for /Applications/PDL
++$cflags='';
++$libs = "-Wl,-no_compact_unwind -L/Applications/PDL/lib -lfftw3 -lfftw3f";
++$descriptor{INC} .= "-I/Applications/PDL/include";
++
+ $descriptor{VERSION_FROM} = 'fftw3.pd';
+ 
+ # I support single and double precision FFTW calls, so both fftw and fftw3f
