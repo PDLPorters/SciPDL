@@ -144,7 +144,7 @@ make
 gfortran -bundle -undefined dynamic_lookup -L/usr/local/lib -fstack-protector-strong  \
    -Wl,-no_compact_unwind PGPLOT.o  -o blib/arch/auto/PGPLOT/PGPLOT.bundle  \
    -L/Applications/PDL/pgplot -lcpgplot -lpgplot -static-libgfortran -static-libgcc \
-   /opt/local/lib/libX11.a /opt/local/lib/libxcb.a /opt/local/lib/libXdmcp.a /opt/local/lib/libXau.a /opt/local/lib/libpng.a  -lz
+   /opt/homebrew/lib/libX11.a /opt/homebrew/lib/libxcb.a /opt/homebrew/lib/libXdmcp.a /opt/homebrew/lib/libXau.a /opt/homebrew/lib/libpng.a  -lz
 make
 make test
 make install
