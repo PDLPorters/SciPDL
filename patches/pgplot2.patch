@@ -98,8 +98,8 @@ diff -urN pgplotsrc_orig/makemake pgplotsrc/makemake
  if (echo $DRIV_LIST | grep -s pndriv 2>&1 1>/dev/null); then
 -  PGPLOT_LIB="$PGPLOT_LIB -lpng -lz"
 -  CPGPLOT_LIB="$CPGPLOT_LIB -lpng -lz"
-+  PGPLOT_LIB="$PGPLOT_LIB /opt/local/lib/libpng.a  -lz" # KG hack
-+  CPGPLOT_LIB="$CPGPLOT_LIB /opt/local/lib/libpng.a  -lz" # KG hack
++  PGPLOT_LIB="$PGPLOT_LIB /opt/homebrew/lib/libpng.a  -lz" # KG hack
++  CPGPLOT_LIB="$CPGPLOT_LIB /opt/homebrew/lib/libpng.a  -lz" # KG hack
  fi
  
  # AQDRIV (Mac OS X) needs extra libraries
@@ -137,7 +137,7 @@ diff -urN pgplotsrc_orig/sys_darwin/gfortran_gcc_BigSur_static.conf pgplotsrc/sy
 +#           X2DRIV (/xdisp and /figdisp).
 +# The arguments needed by the C compiler to locate X-window include files.
 + 
-+   XINCL="-I/opt/local/include"
++   XINCL="-I/opt/homebrew/include"
 +
 +# Optional: Needed by XMDRIV (/xmotif).
 +# The arguments needed by the C compiler to locate Motif, Xt and
@@ -206,7 +206,7 @@ diff -urN pgplotsrc_orig/sys_darwin/gfortran_gcc_BigSur_static.conf pgplotsrc/sy
 +# The library-specification flags to use when linking normal pgplot
 +# demo programs.
 + 
-+   LIBS="-static-libgfortran /opt/local/lib/libX11.a /opt/local/lib/libxcb.a /opt/local/lib/libXdmcp.a /opt/local/lib/libXau.a /opt/local/lib/libpng.a -lz -L/usr/lib"
++   LIBS="-static-libgfortran /opt/homebrew/lib/libX11.a /opt/homebrew/lib/libxcb.a /opt/homebrew/lib/libXdmcp.a /opt/homebrew/lib/libXau.a /opt/homebrew/lib/libpng.a -lz -L/usr/lib"
 +
 +# Optional: Needed by XMDRIV (/xmotif).
 +# The library-specification flags to use when linking motif
