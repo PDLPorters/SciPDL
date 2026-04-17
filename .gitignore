@@ -1,1 +1,7 @@
 .DS_Store
+# Build logs created by build_scipdl.sh
+build*.log
+# Temp file copied from gfortran-static at build time
+/gfortran
+# Claude Code worktree state (per-machine, not for sharing)
+.claude/
