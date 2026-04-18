@@ -43,6 +43,12 @@ Read every entry between the current version and the target version. Watch espec
 
 For large jumps (e.g. 2.093 → 2.104), upgrade in stages — one or two minor versions at a time — so failures are easier to diagnose. Karl prefers this stepwise approach over big-bang upgrades.
 
+### Module ↔ PDL version coupling
+
+Some modules require specific PDL versions. Known coupling:
+- **PDL::FFTW3 0.201+ requires PDL 2.097+** (single-precision real FFTs return zeros otherwise — the workaround was removed in 0.201). When bumping PDL past 2.097, also bump PDL::FFTW3 to 0.203+.
+- Always check the Changes file of any module before bumping it independently of PDL.
+
 ### ⚠ v2.096 is the big restructuring — expect significant work
 
 When upgrading past v2.095 to v2.096, brace for a major rebuild of the script. v2.096 split many things out of PDL core into separate CPAN distributions, and reorganised the source tree to standard Perl layout (`lib/`). Things that will break:

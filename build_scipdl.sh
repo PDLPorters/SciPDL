@@ -63,7 +63,7 @@ VERSION_PERL=5.42.2
 VERSION_PGPLOT=2.35
 VERSION_EXTUTILS_F77=1.26
 VERSION_GSL=2.8
-VERSION_CFITSIO=4.5.0
+VERSION_CFITSIO=4.6.3
 VERSION_ASTRO_FITSIO=1.18
 VERSION_ASTRO_FITS_HEADER=3.09
 VERSION_FFTW=3.3.10
@@ -331,7 +331,7 @@ echo "+++++++++++++++++++++++++++++ Install user-requested modules (issue #5) ++
 # Pure-Perl/XS modules requested for the kitchen sink (GitHub issue #5).
 # These pull in many dependencies but install cleanly via cpan.
 # NOTE: Devel::Carp was also requested but is broken on modern Perl
-#       (uses 'defined(@array)' removed in Perl 5.22, last released 2009).
+#       (uses 'defined(@array)' removed in Perl 5.22, originally released 1998).
 #       Core 'Carp' provides similar functionality.
 cpan -i DateTime String::Scanf Devel::Size List::Uniq LWP::UserAgent \
         Test::Number::Delta Parallel::ForkManager PDL::NDBin
