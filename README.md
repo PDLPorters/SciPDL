@@ -107,6 +107,17 @@ VERSION_PDL_MINUIT=0.002
 
 Note that as of PDL v2.094, `PDL::Minuit` was split out from PDL core into a separate CPAN distribution. SciPDL still bundles it as part of the "kitchen sink".
 
+The following additional Perl modules are also bundled (added per [issue #5](../../issues/5)):
+
+- `DateTime` — date/time handling
+- `String::Scanf` — sscanf-style parsing
+- `Devel::Size` — measure memory usage of Perl variables
+- `List::Uniq` — list deduplication
+- `LWP::UserAgent` — HTTP client
+- `Test::Number::Delta` — numeric comparisons in tests
+- `Parallel::ForkManager` — parallel processing via fork
+- `PDL::NDBin` — N-dimensional binning for PDL
+
 # Minor caveats
 
 Because this is MacOS the code is all signed and notarised and has a hardened runtime. So it is quite locked down.

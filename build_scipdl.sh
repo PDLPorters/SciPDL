@@ -326,6 +326,17 @@ make install
 cd ..
 
 
+echo "+++++++++++++++++++++++++++++ Install user-requested modules (issue #5) +++++++++++++++++++++++++++++"
+
+# Pure-Perl/XS modules requested for the kitchen sink (GitHub issue #5).
+# These pull in many dependencies but install cleanly via cpan.
+# NOTE: Devel::Carp was also requested but is broken on modern Perl
+#       (uses 'defined(@array)' removed in Perl 5.22, last released 2009).
+#       Core 'Carp' provides similar functionality.
+cpan -i DateTime String::Scanf Devel::Size List::Uniq LWP::UserAgent \
+        Test::Number::Delta Parallel::ForkManager PDL::NDBin
+
+
 echo  -+++++++++++++++++++++++++++++ Installing utilites  +++++++++++++++++++++++++++++
 
 # I am told ditto is better for copying app folders
