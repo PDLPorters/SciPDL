@@ -12,6 +12,23 @@
 
 set -e # Stop on error
 
+# Refuse to run from inside a Claude Code worktree.
+# The worktree contains a SNAPSHOT of the script taken when the worktree
+# was created - it won't have any subsequent edits to build_scipdl.sh,
+# patches/, gfortran-static, etc. Always run from the main repo checkout.
+if [[ "$PWD" == */.claude/worktrees/* ]]; then
+    echo "ERROR: refusing to run from inside a Claude Code worktree:"
+    echo "  $PWD"
+    echo ""
+    echo "Worktrees contain a snapshot of files from when the worktree was"
+    echo "created and will not reflect subsequent edits. Run this script"
+    echo "from the main repo checkout instead:"
+    echo "  cd \$(git rev-parse --show-superproject-working-tree 2>/dev/null \\"
+    echo "        || git rev-parse --show-toplevel | sed 's|/.claude/worktrees/.*||')"
+    echo "  ./build_scipdl.sh $@"
+    exit 1
+fi
+
 # Option to nuke previous build artifacts before starting
 # --clean prompts for confirmation in interactive terminals
 # --force-clean skips the prompt (for scripted/automated builds)
@@ -58,7 +75,7 @@ cd ~/Downloads/build
 
 echo +++++++++++++++++++++++++++++ Fetch Sources  +++++++++++++++++++++++++++++
 
-VERSION_PDL=2.095
+VERSION_PDL=2.096
 VERSION_PERL=5.42.2
 VERSION_PGPLOT=2.35
 VERSION_EXTUTILS_F77=1.26
@@ -69,6 +86,7 @@ VERSION_ASTRO_FITS_HEADER=3.09
 VERSION_FFTW=3.3.10
 VERSION_PDL_FFTW3=0.20
 VERSION_PDL_MINUIT=0.002
+VERSION_PDL_SLATEC=2.098
 
 if true
 then 
@@ -82,6 +100,7 @@ curl -OL https://cpan.metacpan.org/authors/id/E/ET/ETJ/PDL-$VERSION_PDL.tar.gz
 curl -OL https://www.fftw.org/fftw-$VERSION_FFTW.tar.gz
 curl -OL https://cpan.metacpan.org/authors/id/E/ET/ETJ/PDL-FFTW3-$VERSION_PDL_FFTW3.tar.gz
 curl -OL https://cpan.metacpan.org/authors/id/E/ET/ETJ/PDL-Minuit-$VERSION_PDL_MINUIT.tar.gz
+curl -OL https://cpan.metacpan.org/authors/id/E/ET/ETJ/PDL-Slatec-$VERSION_PDL_SLATEC.tar.gz
 curl -OL https://www.dropbox.com/s/ib3q8pcgepyiwg9/pgplot531.tar.gz
 
 cp $HERE/patches/pgplot2.patch .
@@ -257,13 +276,18 @@ make
 # Fix up static gfortran linking for modules that use fortran libs
 # Note 'gfortran' is my static script
 
-cd Libtmp/Slatec
- gfortran $EXTRAFLAGS  -mmacosx-version-min=12.7 -bundle -undefined dynamic_lookup  -fstack-protector-strong  Slatec.o barf.o pp-*.o slatec/*.o -o ../../blib/arch/auto/PDL/Slatec/Slatec.bundle  -lm
-
-#cd ../../Libtmp/Minuit 
+# As of PDL 2.096, Slatec is split out into a separate CPAN distribution
+# (and Minuit was already split in 2.094). The in-tree re-link below is
+# commented out - PDL::Slatec will need to be added as a separate build
+# section (like the existing PDL::Minuit one further down) to restore
+# Slatec functionality in the kitchen sink.
+#cd Libtmp/Slatec
+# gfortran $EXTRAFLAGS  -mmacosx-version-min=12.7 -bundle -undefined dynamic_lookup  -fstack-protector-strong  Slatec.o barf.o pp-*.o slatec/*.o -o ../../blib/arch/auto/PDL/Slatec/Slatec.bundle  -lm
+#
+#cd ../../Libtmp/Minuit
 # gfortran $EXTRAFLAGS -mmacosx-version-min=12.7 -bundle -undefined dynamic_lookup  -fstack-protector-strong  Minuit.o FCN.o pp-*.o minuitlib/*.o   -o ../../blib/arch/auto/PDL/Minuit/Minuit.bundle  -lm
-
-cd ../..
+#
+#cd ../..
 
 # Run the PDL test and install
 
@@ -324,6 +348,32 @@ gfortran -mmacosx-version-min=12.7 -bundle -undefined dynamic_lookup -fstack-pro
 make test
 make install
 cd ..
+
+
+echo  +++++++++++++++++++++++++++++ Install PDL::Slatec  +++++++++++++++++++++++++++++
+
+# Was part of PDL core in <2.096, now a separate distribution.
+# Fortran library, so we need to manually re-link the bundle for static linking
+# (gfortran wrapper handles -static-libgfortran -static-libgcc -static-libquadmath)
+
+tar xvf PDL-Slatec-$VERSION_PDL_SLATEC.tar.gz
+cd PDL-Slatec-$VERSION_PDL_SLATEC
+perl Makefile.PL
+make
+# Manual static re-link of the Slatec bundle
+gfortran -mmacosx-version-min=12.7 -bundle -undefined dynamic_lookup -fstack-protector-strong \
+   Slatec.o barf.o pp-*.o slatec/*.o \
+   -o blib/arch/auto/PDL/Slatec/Slatec.bundle -lm
+make test
+make install
+cd ..
+
+
+echo "+++++++++++++++++++++++++++++ Install split-out PDL modules (kitchen sink) +++++++++++++++++++++++++++++"
+
+# These were part of PDL core in <2.096 but split into separate distros.
+# All install cleanly via cpan and link statically (against the GSL we built).
+cpan -i PDL::GSL::SF PDL::GSL::CDF PDL::Complex PDL::Fit::Gaussian
 
 
 echo "+++++++++++++++++++++++++++++ Install user-requested modules (issue #5) +++++++++++++++++++++++++++++"

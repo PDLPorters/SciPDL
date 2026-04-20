@@ -15,9 +15,22 @@ See `ARCHITECTURE.md` for:
 
 ## Working preferences
 
-### Work in the main repo folder
+### Work in the main repo folder — NEVER the worktree
 
-Do NOT use Claude Code worktrees. Edit, build, and commit directly from `/Users/karl/GIT/SciPDL/` (or wherever the repo is checked out on the current machine). Karl finds the worktree indirection confusing.
+Do NOT use Claude Code worktrees. Edit, build, and commit directly from `/Users/karl/GIT/SciPDL/` (or wherever the repo is checked out on the current machine).
+
+**The trap:** Claude Code may start the session in a worktree at `.claude/worktrees/<name>/`. The worktree's working directory persists across `Bash` tool calls. If you use relative paths (`./build_scipdl.sh`, `cp gfortran-static .`, etc.) you'll silently hit STALE copies of files snapshotted when the worktree was created — not your live edits.
+
+**Defences in place:**
+- `build_scipdl.sh` itself refuses to run if `$PWD` contains `/.claude/worktrees/`. If you see this error, `cd /Users/karl/GIT/SciPDL` first.
+- This file (CLAUDE.md) is loaded into every session as a reminder.
+
+**What to actually do:**
+- **Always start every Bash command with `cd /Users/karl/GIT/SciPDL && …`** OR use absolute paths like `/Users/karl/GIT/SciPDL/build_scipdl.sh`.
+- When the user asks "did this commit?" or "is this staged?", run `git -C /Users/karl/GIT/SciPDL status` to see the real state, not the worktree's.
+- If you find yourself writing `./<filename>` and you're unsure, run `pwd` first.
+
+Karl finds the worktree indirection actively confusing — protect against it.
 
 ### Snapshot working builds before version bumps
 

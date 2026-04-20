@@ -97,7 +97,7 @@ VERSION_PERL=5.42.2
 VERSION_PGPLOT=2.35
 VERSION_EXTUTILS_F77=1.26
 VERSION_GSL=2.8
-VERSION_CFITSIO=4.5.0
+VERSION_CFITSIO=4.6.3
 VERSION_ASTRO_FITSIO=1.18
 VERSION_ASTRO_FITS_HEADER=3.09
 VERSION_FFTW=3.3.10
@@ -106,6 +106,17 @@ VERSION_PDL_MINUIT=0.002
 ```
 
 Note that as of PDL v2.094, `PDL::Minuit` was split out from PDL core into a separate CPAN distribution. SciPDL still bundles it as part of the "kitchen sink".
+
+The following additional Perl modules are also bundled (added per [issue #5](../../issues/5)):
+
+- `DateTime` — date/time handling
+- `String::Scanf` — sscanf-style parsing
+- `Devel::Size` — measure memory usage of Perl variables
+- `List::Uniq` — list deduplication
+- `LWP::UserAgent` — HTTP client
+- `Test::Number::Delta` — numeric comparisons in tests
+- `Parallel::ForkManager` — parallel processing via fork
+- `PDL::NDBin` — N-dimensional binning for PDL
 
 # Minor caveats
 
