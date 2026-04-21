@@ -9,7 +9,7 @@ I have included the source scripts that do all the building FWIW but these will 
 
 ----
 
-*Current version for PDL v2.095, Karl Glazebrook, 17/4/2026*
+*Current version for PDL v2.096, Karl Glazebrook, 21/4/2026 (kitchen-sink with Slatec, GSL, Complex, IO::Dicom, IO::Browser, IO::IDL, Opt::Simplex, Transform::Proj4 etc. restored after the v2.096 split-out)*
 
 Welcome to SciPDL! SciPDL is a drag and drop installer for PDL on the Mac. SciPDL now includes its own version of perl in order to work across multiple versions of Mac OS X and a variety of environments (note old versions used the system perl which led to instability between OS updates).
 
@@ -92,7 +92,7 @@ The `pgplot` graphics library libpgplot is installed in `/Applications/PDL/pgplo
 The current version numbers of the important stuff within SciPDL are:
 
 ```
-VERSION_PDL=2.095
+VERSION_PDL=2.096
 VERSION_PERL=5.42.2
 VERSION_PGPLOT=2.35
 VERSION_EXTUTILS_F77=1.26
@@ -103,9 +103,20 @@ VERSION_ASTRO_FITS_HEADER=3.09
 VERSION_FFTW=3.3.10
 VERSION_PDL_FFTW3=0.20
 VERSION_PDL_MINUIT=0.002
+VERSION_PDL_SLATEC=2.098
+VERSION_PDL_GSL=2.096
+VERSION_PDL_COMPLEX=2.011
+VERSION_PDL_FIT=2.097
+VERSION_PDL_GRAPHICS_LIMITS=0.03
+VERSION_PDL_IO_DICOM=2.097
+VERSION_PDL_IO_BROWSER=0.001
+VERSION_PDL_TRANSFORM_PROJ4=2.099
+VERSION_PDL_IO_IDL=2.096
+VERSION_PDL_OPT_SIMPLEX=2.096
+VERSION_PDL_NDBIN=0.029
 ```
 
-Note that as of PDL v2.094, `PDL::Minuit` was split out from PDL core into a separate CPAN distribution. SciPDL still bundles it as part of the "kitchen sink".
+Note that as of PDL v2.094, `PDL::Minuit` was split out from PDL core into a separate CPAN distribution. As of v2.096, many more modules were split out (`PDL::Slatec`, `PDL::GSL::*`, `PDL::Complex`, `PDL::Fit::Gaussian`, `PDL::Graphics::Limits`, `PDL::IO::Dicom`, `PDL::IO::Browser`, `PDL::Transform::Proj4`). SciPDL bundles all of these as part of the "kitchen sink".
 
 The following additional Perl modules are also bundled (added per [issue #5](../../issues/5)):
 

@@ -53,6 +53,30 @@ fi
 unset PERL5DB
 unset PERL5LIB
 
+# Helper: build and install one or more CPAN modules from local tarballs
+# in ~/Downloads/build. We do this manually (tar / Makefile.PL / make /
+# test / install) rather than 'cpan -i' because:
+#   1. cpan's default mirror only keeps the latest version of each distro
+#      (404s on older versions when given an AUTHOR/Dist-X.Y.tar.gz path)
+#   2. cpan doesn't accept local file paths (mangles them into bogus URLs)
+# Usage:
+#     install_local_tarballs PDL-GSL-2.096 PDL-Complex-2.011 ...
+install_local_tarballs() {
+    local saved_pwd=$PWD
+    for name in "$@"; do
+        echo "----- install_local_tarballs: $name -----"
+        cd $HOME/Downloads/build
+        tar xvf $name.tar.gz
+        cd $name
+        perl Makefile.PL
+        make
+        make test
+        make install
+        cd $HOME/Downloads/build
+    done
+    cd $saved_pwd
+}
+
 # Refuse to run if anaconda is present and activated
 if [[ -n "$CONDA_PREFIX" && -d "$CONDA_PREFIX" ]]; then
     echo "Anaconda is activated. CONDA_PREFIX: $CONDA_PREFIX"
@@ -88,6 +112,22 @@ VERSION_PDL_FFTW3=0.20
 VERSION_PDL_MINUIT=0.002
 VERSION_PDL_SLATEC=2.098
 
+# The following PDL:: family modules were split out of PDL core in v2.096.
+# Their versions are pinned to releases from ~2025-01-02 (PDL 2.096 era) to
+# prevent CPAN's prereq resolution from transitively upgrading PDL itself.
+# All specify a minimum PDL version of 2.094 or 2.095, which PDL 2.096
+# satisfies.
+VERSION_PDL_GSL=2.096
+VERSION_PDL_COMPLEX=2.011
+VERSION_PDL_FIT=2.097
+VERSION_PDL_GRAPHICS_LIMITS=0.03
+VERSION_PDL_IO_DICOM=2.097
+VERSION_PDL_IO_BROWSER=0.001
+VERSION_PDL_TRANSFORM_PROJ4=2.099  # 2.099 fixes test failures with PROJ 9.8+
+VERSION_PDL_IO_IDL=2.096
+VERSION_PDL_OPT_SIMPLEX=2.096
+VERSION_PDL_NDBIN=0.029
+
 if true
 then 
 
@@ -101,7 +141,21 @@ curl -OL https://www.fftw.org/fftw-$VERSION_FFTW.tar.gz
 curl -OL https://cpan.metacpan.org/authors/id/E/ET/ETJ/PDL-FFTW3-$VERSION_PDL_FFTW3.tar.gz
 curl -OL https://cpan.metacpan.org/authors/id/E/ET/ETJ/PDL-Minuit-$VERSION_PDL_MINUIT.tar.gz
 curl -OL https://cpan.metacpan.org/authors/id/E/ET/ETJ/PDL-Slatec-$VERSION_PDL_SLATEC.tar.gz
-curl -OL https://www.dropbox.com/s/ib3q8pcgepyiwg9/pgplot531.tar.gz
+# Pinned split-out PDL:: modules. We fetch from cpan.metacpan.org directly
+# rather than relying on cpan -i because cpan's default mirror only keeps
+# the latest version of each distro.
+curl -OL https://cpan.metacpan.org/authors/id/E/ET/ETJ/PDL-GSL-$VERSION_PDL_GSL.tar.gz
+curl -OL https://cpan.metacpan.org/authors/id/E/ET/ETJ/PDL-Complex-$VERSION_PDL_COMPLEX.tar.gz
+curl -OL https://cpan.metacpan.org/authors/id/E/ET/ETJ/PDL-Fit-$VERSION_PDL_FIT.tar.gz
+curl -OL https://cpan.metacpan.org/authors/id/E/ET/ETJ/PDL-Graphics-Limits-$VERSION_PDL_GRAPHICS_LIMITS.tar.gz
+curl -OL https://cpan.metacpan.org/authors/id/E/ET/ETJ/PDL-IO-Dicom-$VERSION_PDL_IO_DICOM.tar.gz
+curl -OL https://cpan.metacpan.org/authors/id/E/ET/ETJ/PDL-IO-Browser-$VERSION_PDL_IO_BROWSER.tar.gz
+curl -OL https://cpan.metacpan.org/authors/id/E/ET/ETJ/PDL-Transform-Proj4-$VERSION_PDL_TRANSFORM_PROJ4.tar.gz
+curl -OL https://cpan.metacpan.org/authors/id/E/ET/ETJ/PDL-IO-IDL-$VERSION_PDL_IO_IDL.tar.gz
+curl -OL https://cpan.metacpan.org/authors/id/E/ET/ETJ/PDL-Opt-Simplex-$VERSION_PDL_OPT_SIMPLEX.tar.gz
+# Dropbox now returns an HTML preview page for the bare URL; the ?dl=1
+# query parameter forces an actual file download.
+curl -L -o pgplot531.tar.gz 'https://www.dropbox.com/s/ib3q8pcgepyiwg9/pgplot531.tar.gz?dl=1'
 
 cp $HERE/patches/pgplot2.patch .
 cp $HERE/patches/pdl-fftw3-0.20.patch .
@@ -372,8 +426,33 @@ cd ..
 echo "+++++++++++++++++++++++++++++ Install split-out PDL modules (kitchen sink) +++++++++++++++++++++++++++++"
 
 # These were part of PDL core in <2.096 but split into separate distros.
-# All install cleanly via cpan and link statically (against the GSL we built).
-cpan -i PDL::GSL::SF PDL::GSL::CDF PDL::Complex PDL::Fit::Gaussian
+# We pin to specific tarball versions rather than using module names, so
+# that CPAN doesn't transitively upgrade PDL itself (newer releases of
+# these distros bump the minimum required PDL version). All link statically
+# against the GSL we built; PDL::Transform::Proj4 ships its own libproj/
+# libsqlite3 via Alien::proj/Alien::sqlite (installed under /Applications/PDL).
+#
+# NOTE: the following were also split out but are NOT included because they
+# require C libraries that were never bundled in previous SciPDL releases
+# (PDL silently skipped them in pre-2.096 builds):
+#   - PDL::IO::HDF       requires hdf5
+#   - PDL::IO::GD        requires libgd
+#   - PDL::Graphics::TriD requires OpenGL/freeglut (Apple-deprecated)
+# Alien::proj is needed by PDL::Transform::Proj4 (it builds and ships a
+# private libproj.dylib under /Applications/PDL). Install via cpan since
+# it's a regular CPAN module that doesn't trigger a PDL upgrade.
+cpan -i Alien::proj
+
+install_local_tarballs \
+    PDL-GSL-$VERSION_PDL_GSL \
+    PDL-Complex-$VERSION_PDL_COMPLEX \
+    PDL-Fit-$VERSION_PDL_FIT \
+    PDL-Graphics-Limits-$VERSION_PDL_GRAPHICS_LIMITS \
+    PDL-IO-Dicom-$VERSION_PDL_IO_DICOM \
+    PDL-IO-Browser-$VERSION_PDL_IO_BROWSER \
+    PDL-Transform-Proj4-$VERSION_PDL_TRANSFORM_PROJ4 \
+    PDL-IO-IDL-$VERSION_PDL_IO_IDL \
+    PDL-Opt-Simplex-$VERSION_PDL_OPT_SIMPLEX
 
 
 echo "+++++++++++++++++++++++++++++ Install user-requested modules (issue #5) +++++++++++++++++++++++++++++"
@@ -383,6 +462,11 @@ echo "+++++++++++++++++++++++++++++ Install user-requested modules (issue #5) ++
 # NOTE: Devel::Carp was also requested but is broken on modern Perl
 #       (uses 'defined(@array)' removed in Perl 5.22, originally released 1998).
 #       Core 'Carp' provides similar functionality.
+# PDL::NDBin gets installed via cpan (not the local tarball helper) because
+# it has several pure-Perl prereqs (Math::Round, Class::Load, Log::Any,
+# Params::Validate, UUID::Tiny) that need CPAN's transitive resolution.
+# Latest NDBin (0.029) only requires PDL >= 2.088 so this won't trigger
+# a PDL upgrade.
 cpan -i DateTime String::Scanf Devel::Size List::Uniq LWP::UserAgent \
         Test::Number::Delta Parallel::ForkManager PDL::NDBin
 
