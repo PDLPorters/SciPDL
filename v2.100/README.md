@@ -9,7 +9,7 @@ I have included the source scripts that do all the building FWIW but these will 
 
 ----
 
-*Current version for PDL v2.101, Karl Glazebrook, 22/4/2026 — bump from 2.100. PDL 2.101 was ~11 months of development: `pptemplate` improvements, reproducible `pdldoc` database, `pdl(cplx(1,2))` constructor, new `convert_flowing`/`dimincs`/`axis{lin,log}vals`/`allaxis{lin,log}vals` methods, `magnover` always returns real, various `rldseq`/`rldND`/`rldvec` fixes, Perl 5.42 bug workaround, and `*vals` now returns float instead of conditionally double.*
+*Current version for PDL v2.100, Karl Glazebrook, 21/4/2026 — bump from 2.099. PDL 2.100 is a modest release (GCC 15 math prototype fixes, `Basic::rvals` Centre can be an ndarray, new `Ufunc::{b,}xorover`, Math::polyroots crash fix, improved auto-generated POD).*
 
 Welcome to SciPDL! SciPDL is a drag and drop installer for PDL on the Mac. SciPDL now includes its own version of perl in order to work across multiple versions of Mac OS X and a variety of environments (note old versions used the system perl which led to instability between OS updates).
 
@@ -92,7 +92,7 @@ The `pgplot` graphics library libpgplot is installed in `/Applications/PDL/pgplo
 The current version numbers of the important stuff within SciPDL are:
 
 ```
-VERSION_PDL=2.101
+VERSION_PDL=2.100
 VERSION_PERL=5.42.2
 VERSION_PGPLOT=2.35
 VERSION_EXTUTILS_F77=1.26
