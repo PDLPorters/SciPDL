@@ -99,7 +99,7 @@ cd ~/Downloads/build
 
 echo +++++++++++++++++++++++++++++ Fetch Sources  +++++++++++++++++++++++++++++
 
-VERSION_PDL=2.098
+VERSION_PDL=2.096
 VERSION_PERL=5.42.2
 VERSION_PGPLOT=2.35
 VERSION_EXTUTILS_F77=1.26
@@ -115,8 +115,8 @@ VERSION_PDL_SLATEC=2.098
 # The following PDL:: family modules were split out of PDL core in v2.096.
 # Their versions are pinned to releases from ~2025-01-02 (PDL 2.096 era) to
 # prevent CPAN's prereq resolution from transitively upgrading PDL itself.
-# All specify a minimum PDL version of 2.094 or 2.095, which is satisfied
-# by any PDL 2.094+.
+# All specify a minimum PDL version of 2.094 or 2.095, which PDL 2.096
+# satisfies.
 VERSION_PDL_GSL=2.096
 VERSION_PDL_COMPLEX=2.011
 VERSION_PDL_FIT=2.097
