@@ -1,0 +1,23 @@
+--- Makefile.PL.orig	2024-01-05 14:25:43.000000000 +1100
++++ Makefile.PL	2024-01-05 14:26:53.000000000 +1100
+@@ -20,7 +20,7 @@
+     }
+     $cflags = Alien::FFTW3->cflags;
+     $libs   = Alien::FFTW3->libs;
+-} else {
++} elsif (0) { # KG don't run this test as png-config does not exist on MacOS
+     print "Alien::FFTW3 not found.  Using pkg-config instead...\n";
+ 
+     require IPC::Run;
+@@ -45,6 +45,11 @@
+ my @package = (qw(FFTW3.pd FFTW3 PDL::FFTW3), undef, 1);
+ my %descriptor = pdlpp_stdargs(\@package);
+ 
++# KG addition for /Applications/PDL
++$cflags='';
++$libs = "-Wl,-no_compact_unwind -L/Applications/PDL/lib -lfftw3 -lfftw3f";
++$descriptor{INC} .= "-I/Applications/PDL/include";
++
+ $descriptor{VERSION_FROM} = 'FFTW3.pd';
+ $descriptor{OPTIMIZE}  = ($Config{ccname} =~ m/gcc/) ? '-O2' : $Config{optimize};
+ $descriptor{CCFLAGS} .= ( ($Config{ccname} =~ m/gcc/) ? '--std=gnu99 ' : '' ) . $Config{ccflags};

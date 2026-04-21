@@ -99,7 +99,7 @@ cd ~/Downloads/build
 
 echo +++++++++++++++++++++++++++++ Fetch Sources  +++++++++++++++++++++++++++++
 
-VERSION_PDL=2.100
+VERSION_PDL=2.099
 VERSION_PERL=5.42.2
 VERSION_PGPLOT=2.35
 VERSION_EXTUTILS_F77=1.26
@@ -326,6 +326,22 @@ cd PDL-$VERSION_PDL
 perl Makefile.PL
 make
 
+
+# Fix up static gfortran linking for modules that use fortran libs
+# Note 'gfortran' is my static script
+
+# As of PDL 2.096, Slatec is split out into a separate CPAN distribution
+# (and Minuit was already split in 2.094). The in-tree re-link below is
+# commented out - PDL::Slatec will need to be added as a separate build
+# section (like the existing PDL::Minuit one further down) to restore
+# Slatec functionality in the kitchen sink.
+#cd Libtmp/Slatec
+# gfortran $EXTRAFLAGS  -mmacosx-version-min=12.7 -bundle -undefined dynamic_lookup  -fstack-protector-strong  Slatec.o barf.o pp-*.o slatec/*.o -o ../../blib/arch/auto/PDL/Slatec/Slatec.bundle  -lm
+#
+#cd ../../Libtmp/Minuit
+# gfortran $EXTRAFLAGS -mmacosx-version-min=12.7 -bundle -undefined dynamic_lookup  -fstack-protector-strong  Minuit.o FCN.o pp-*.o minuitlib/*.o   -o ../../blib/arch/auto/PDL/Minuit/Minuit.bundle  -lm
+#
+#cd ../..
 
 # Run the PDL test and install
 
