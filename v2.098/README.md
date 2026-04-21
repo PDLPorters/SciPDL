@@ -9,7 +9,7 @@ I have included the source scripts that do all the building FWIW but these will 
 
 ----
 
-*Current version for PDL v2.099, Karl Glazebrook, 21/4/2026 — bump from 2.098. PDL 2.099 brings substantial internal changes (PP `CopyBadStatusCode` removed, `Ufunc::diffover`→`numdiff`, nan→byte fix, Math::polyroots fix, etc.). PDL::FFTW3 bumped 0.20→0.203 to match — PDL 2.097+ removed an internal workaround that the old FFTW3 binding relied on.*
+*Current version for PDL v2.098, Karl Glazebrook, 21/4/2026 (small bump from 2.096 — 2.097 restored VERSION location, 2.098 was Windows + Test::Deep::PDL fixes)*
 
 Welcome to SciPDL! SciPDL is a drag and drop installer for PDL on the Mac. SciPDL now includes its own version of perl in order to work across multiple versions of Mac OS X and a variety of environments (note old versions used the system perl which led to instability between OS updates).
 
@@ -92,7 +92,7 @@ The `pgplot` graphics library libpgplot is installed in `/Applications/PDL/pgplo
 The current version numbers of the important stuff within SciPDL are:
 
 ```
-VERSION_PDL=2.099
+VERSION_PDL=2.098
 VERSION_PERL=5.42.2
 VERSION_PGPLOT=2.35
 VERSION_EXTUTILS_F77=1.26
@@ -101,7 +101,7 @@ VERSION_CFITSIO=4.6.3
 VERSION_ASTRO_FITSIO=1.18
 VERSION_ASTRO_FITS_HEADER=3.09
 VERSION_FFTW=3.3.10
-VERSION_PDL_FFTW3=0.203
+VERSION_PDL_FFTW3=0.20
 VERSION_PDL_MINUIT=0.002
 VERSION_PDL_SLATEC=2.098
 VERSION_PDL_GSL=2.096

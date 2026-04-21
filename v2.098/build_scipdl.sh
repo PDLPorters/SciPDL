@@ -99,7 +99,7 @@ cd ~/Downloads/build
 
 echo +++++++++++++++++++++++++++++ Fetch Sources  +++++++++++++++++++++++++++++
 
-VERSION_PDL=2.099
+VERSION_PDL=2.098
 VERSION_PERL=5.42.2
 VERSION_PGPLOT=2.35
 VERSION_EXTUTILS_F77=1.26
@@ -108,7 +108,7 @@ VERSION_CFITSIO=4.6.3
 VERSION_ASTRO_FITSIO=1.18
 VERSION_ASTRO_FITS_HEADER=3.09
 VERSION_FFTW=3.3.10
-VERSION_PDL_FFTW3=0.203
+VERSION_PDL_FFTW3=0.20
 VERSION_PDL_MINUIT=0.002
 VERSION_PDL_SLATEC=2.098
 
@@ -158,7 +158,7 @@ curl -OL https://cpan.metacpan.org/authors/id/E/ET/ETJ/PDL-Opt-Simplex-$VERSION_
 curl -L -o pgplot531.tar.gz 'https://www.dropbox.com/s/ib3q8pcgepyiwg9/pgplot531.tar.gz?dl=1'
 
 cp $HERE/patches/pgplot2.patch .
-cp $HERE/patches/pdl-fftw3.patch .
+cp $HERE/patches/pdl-fftw3-0.20.patch .
 cp $HERE/patches/AstroFitsIO.patch .
 
 fi
@@ -377,7 +377,7 @@ echo  +++++++++++++++++++++++++++++ Install PDL::FFTW3  ++++++++++++++++++++++++
 tar xvf PDL-FFTW3-$VERSION_PDL_FFTW3.tar.gz
 cd PDL-FFTW3-$VERSION_PDL_FFTW3
 # Patch the Makefile.PL to find the libs in the right place
-patch -i ../pdl-fftw3.patch
+patch -i ../pdl-fftw3-0.20.patch
 perl Makefile.PL
 make
 make test

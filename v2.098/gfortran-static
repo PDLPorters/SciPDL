@@ -1,0 +1,3 @@
+#!/bin/bash
+/usr/local/bin/gfortran -static-libgfortran -static-libgcc -static-libquadmath $@
+
