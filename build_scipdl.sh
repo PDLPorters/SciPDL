@@ -128,6 +128,18 @@ VERSION_PDL_IO_IDL=2.098
 VERSION_PDL_OPT_SIMPLEX=2.097
 VERSION_PDL_NDBIN=0.029
 
+# Additional PDL modules requested in issue #4 (mohawk2's list).
+VERSION_PDL_GRAPHICS_SIMPLE=1.016
+VERSION_PDL_GRAPHICS_COLORSPACE=0.206
+VERSION_PDL_TRANSFORM_COLOR=1.010
+VERSION_PDL_GRAPHICS_GNUPLOT=2.032
+
+# PDL::IO::GD needs libgd which we build ourselves statically (no Homebrew
+# static .a available). VERSION_LIBGD is the C library; VERSION_PDL_IO_GD
+# is the Perl binding.
+VERSION_LIBGD=2.3.3
+VERSION_PDL_IO_GD=2.103
+
 if true
 then 
 
@@ -153,6 +165,14 @@ curl -OL https://cpan.metacpan.org/authors/id/E/ET/ETJ/PDL-IO-Browser-$VERSION_P
 curl -OL https://cpan.metacpan.org/authors/id/E/ET/ETJ/PDL-Transform-Proj4-$VERSION_PDL_TRANSFORM_PROJ4.tar.gz
 curl -OL https://cpan.metacpan.org/authors/id/E/ET/ETJ/PDL-IO-IDL-$VERSION_PDL_IO_IDL.tar.gz
 curl -OL https://cpan.metacpan.org/authors/id/E/ET/ETJ/PDL-Opt-Simplex-$VERSION_PDL_OPT_SIMPLEX.tar.gz
+# Issue #4 wishlist additions
+curl -OL https://cpan.metacpan.org/authors/id/E/ET/ETJ/PDL-Graphics-Simple-$VERSION_PDL_GRAPHICS_SIMPLE.tar.gz
+curl -OL https://cpan.metacpan.org/authors/id/E/ET/ETJ/PDL-Graphics-ColorSpace-$VERSION_PDL_GRAPHICS_COLORSPACE.tar.gz
+curl -OL https://cpan.metacpan.org/authors/id/E/ET/ETJ/PDL-Transform-Color-$VERSION_PDL_TRANSFORM_COLOR.tar.gz
+curl -OL https://cpan.metacpan.org/authors/id/E/ET/ETJ/PDL-Graphics-Gnuplot-$VERSION_PDL_GRAPHICS_GNUPLOT.tar.gz
+# libgd C library and PDL::IO::GD binding (built/installed in their own sections below)
+curl -OL https://github.com/libgd/libgd/releases/download/gd-$VERSION_LIBGD/libgd-$VERSION_LIBGD.tar.gz
+curl -OL https://cpan.metacpan.org/authors/id/E/ET/ETJ/PDL-IO-GD-$VERSION_PDL_IO_GD.tar.gz
 # Dropbox now returns an HTML preview page for the bare URL; the ?dl=1
 # query parameter forces an actual file download.
 curl -L -o pgplot531.tar.gz 'https://www.dropbox.com/s/ib3q8pcgepyiwg9/pgplot531.tar.gz?dl=1'
@@ -314,6 +334,28 @@ cd ..
 cpan -i GSB/Astro-FITS-Header-$VERSION_ASTRO_FITS_HEADER.tar.gz
 
 
+echo  +++++++++++++++++++++++++++++ Install libgd  +++++++++++++++++++++++++++++
+
+# libgd for PDL::IO::GD. Built static + PNG-only (the only image format
+# needed by PDL::IO::GD's tests; jpeg/tiff/freetype/etc. would all need
+# their own static libs which Homebrew doesn't provide).
+#
+# Note libgd.a alone is incomplete - it has unresolved libpng symbols.
+# We link in /opt/homebrew/lib/libpng.a manually when re-linking PDL::IO::GD's
+# bundle below (same pattern as PGPLOT/Slatec/Minuit static re-links).
+tar xvf libgd-$VERSION_LIBGD.tar.gz
+cd libgd-$VERSION_LIBGD
+./configure \
+  --enable-static --disable-shared \
+  --with-png=/opt/homebrew --with-zlib \
+  --without-jpeg --without-tiff --without-webp --without-freetype \
+  --without-fontconfig --without-raqm --without-x \
+  --prefix=/Applications/PDL
+make
+make install
+cd ..
+
+
 echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 echo ++++++++++++++++++++++++++++ Install PDL!!! ++++++++++++++++++++++++++++
 echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -416,12 +458,15 @@ echo "+++++++++++++++++++++++++++++ Install split-out PDL modules (kitchen sink)
 # against the GSL we built; PDL::Transform::Proj4 ships its own libproj/
 # libsqlite3 via Alien::proj/Alien::sqlite (installed under /Applications/PDL).
 #
-# NOTE: the following were also split out but are NOT included because they
-# require C libraries that were never bundled in previous SciPDL releases
-# (PDL silently skipped them in pre-2.096 builds):
-#   - PDL::IO::HDF       requires hdf5
-#   - PDL::IO::GD        requires libgd
-#   - PDL::Graphics::TriD requires OpenGL/freeglut (Apple-deprecated)
+# NOTE: the following were also split out but are NOT included because
+# their underlying C libraries are awkward to bundle:
+#   - PDL::IO::HDF       requires hdf5 (awkward static build, not
+#                        previously shipped, value debatable now that
+#                        most science uses HDF5/NetCDF)
+#   - PDL::Graphics::TriD requires OpenGL/freeglut (Apple-deprecated
+#                        OpenGL framework, slated for eventual removal)
+# (PDL::IO::GD IS bundled now - libgd is built statically above and the
+# binding is installed in its own section after the split-out modules.)
 # Alien::proj is needed by PDL::Transform::Proj4 (it builds and ships a
 # private libproj.dylib under /Applications/PDL). Install via cpan since
 # it's a regular CPAN module that doesn't trigger a PDL upgrade.
@@ -453,6 +498,45 @@ echo "+++++++++++++++++++++++++++++ Install user-requested modules (issue #5) ++
 # a PDL upgrade.
 cpan -i DateTime String::Scanf Devel::Size List::Uniq LWP::UserAgent \
         Test::Number::Delta Parallel::ForkManager PDL::NDBin
+
+
+echo "+++++++++++++++++++++++++++++ Install PDL graphics/colour extras (issue #4) +++++++++++++++++++++++++++++"
+
+# Pure-Perl modules from mohawk2's wishlist on issue #4. Note PDL::Graphics::Gnuplot
+# also requires the gnuplot binary at runtime; we install only the Perl module
+# here (users can install gnuplot themselves via Homebrew if they want).
+# Pre-install Perl prereqs of PDL::Graphics::Gnuplot via cpan so that
+# install_local_tarballs (which doesn't do prereq resolution) finds them.
+#   - Alien::Gnuplot: locates the gnuplot binary at runtime
+#   - IPC::Run, Safe::Isa: required by PDL::Graphics::Gnuplot
+cpan -i Alien::Gnuplot IPC::Run Safe::Isa
+install_local_tarballs \
+    PDL-Graphics-Simple-$VERSION_PDL_GRAPHICS_SIMPLE \
+    PDL-Graphics-ColorSpace-$VERSION_PDL_GRAPHICS_COLORSPACE \
+    PDL-Transform-Color-$VERSION_PDL_TRANSFORM_COLOR \
+    PDL-Graphics-Gnuplot-$VERSION_PDL_GRAPHICS_GNUPLOT
+
+
+echo "+++++++++++++++++++++++++++++ Install PDL::IO::GD (uses bundled libgd) +++++++++++++++++++++++++++++"
+
+# PDL::IO::GD needs the libgd we built above. Its Makefile.PL respects
+# GD_LIBS/GD_INC env vars to find an out-of-tree libgd. After the normal
+# 'make', we manually re-link the GD.bundle to add /opt/homebrew/lib/libpng.a
+# directly - libgd.a depends on libpng symbols but EUMM's LIBS-parsing
+# silently strips absolute .a paths so we can't get -lpng on the link line
+# via Makefile.PL. Same pattern as the PGPLOT/Slatec/Minuit re-links.
+tar xvf PDL-IO-GD-$VERSION_PDL_IO_GD.tar.gz
+cd PDL-IO-GD-$VERSION_PDL_IO_GD
+GD_LIBS=/Applications/PDL/lib GD_INC=/Applications/PDL/include perl Makefile.PL
+make
+# Manual re-link of the GD bundle to pull in libpng statically.
+gcc -mmacosx-version-min=12.7 -bundle -undefined dynamic_lookup -fstack-protector-strong \
+   GD.o \
+   -o blib/arch/auto/PDL/IO/GD/GD.bundle \
+   /Applications/PDL/lib/libgd.a /opt/homebrew/lib/libpng.a -lz -lm
+make test
+make install
+cd ..
 
 
 echo  -+++++++++++++++++++++++++++++ Installing utilites  +++++++++++++++++++++++++++++
