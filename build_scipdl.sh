@@ -107,25 +107,25 @@ VERSION_GSL=2.8
 VERSION_CFITSIO=4.6.3
 VERSION_ASTRO_FITSIO=1.18
 VERSION_ASTRO_FITS_HEADER=3.09
-VERSION_FFTW=3.3.10
+VERSION_FFTW=3.3.11
 VERSION_PDL_FFTW3=0.203
 VERSION_PDL_MINUIT=0.002
 VERSION_PDL_SLATEC=2.098
 
 # The following PDL:: family modules were split out of PDL core in v2.096.
-# Their versions are pinned to releases from ~2025-01-02 (PDL 2.096 era) to
-# prevent CPAN's prereq resolution from transitively upgrading PDL itself.
-# All specify a minimum PDL version of 2.094 or 2.095, which is satisfied
-# by any PDL 2.094+.
+# Versions are pinned to specific releases (current latest as of the
+# release date of whatever VERSION_PDL is set to) for reproducible builds.
+# When bumping PDL, bump these alongside it - some have version-coupling
+# with PDL internals (see PDL::GSL and PDL::FFTW3 comments below).
 VERSION_PDL_GSL=2.103  # 2.103 fixes test using $x->inplace->transpose, now an error in PDL 2.104+
 VERSION_PDL_COMPLEX=2.011
-VERSION_PDL_FIT=2.097
+VERSION_PDL_FIT=2.100
 VERSION_PDL_GRAPHICS_LIMITS=0.03
-VERSION_PDL_IO_DICOM=2.097
+VERSION_PDL_IO_DICOM=2.098
 VERSION_PDL_IO_BROWSER=0.001
 VERSION_PDL_TRANSFORM_PROJ4=2.099  # 2.099 fixes test failures with PROJ 9.8+
-VERSION_PDL_IO_IDL=2.096
-VERSION_PDL_OPT_SIMPLEX=2.096
+VERSION_PDL_IO_IDL=2.098
+VERSION_PDL_OPT_SIMPLEX=2.097
 VERSION_PDL_NDBIN=0.029
 
 if true
