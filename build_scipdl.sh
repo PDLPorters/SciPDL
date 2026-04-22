@@ -136,7 +136,9 @@ VERSION_PDL_GRAPHICS_GNUPLOT=2.032
 
 # PDL::IO::GD needs libgd which we build ourselves statically (no Homebrew
 # static .a available). VERSION_LIBGD is the C library; VERSION_PDL_IO_GD
-# is the Perl binding.
+# is the Perl binding. We also build libjpeg-turbo statically so libgd can
+# support JPEG (Homebrew has libjpeg only as a dylib).
+VERSION_LIBJPEG_TURBO=3.1.4.1
 VERSION_LIBGD=2.3.3
 VERSION_PDL_IO_GD=2.103
 
@@ -170,7 +172,9 @@ curl -OL https://cpan.metacpan.org/authors/id/E/ET/ETJ/PDL-Graphics-Simple-$VERS
 curl -OL https://cpan.metacpan.org/authors/id/E/ET/ETJ/PDL-Graphics-ColorSpace-$VERSION_PDL_GRAPHICS_COLORSPACE.tar.gz
 curl -OL https://cpan.metacpan.org/authors/id/E/ET/ETJ/PDL-Transform-Color-$VERSION_PDL_TRANSFORM_COLOR.tar.gz
 curl -OL https://cpan.metacpan.org/authors/id/E/ET/ETJ/PDL-Graphics-Gnuplot-$VERSION_PDL_GRAPHICS_GNUPLOT.tar.gz
-# libgd C library and PDL::IO::GD binding (built/installed in their own sections below)
+# libjpeg-turbo, libgd, and the PDL::IO::GD Perl binding
+# (built/installed in their own sections below)
+curl -OL https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/$VERSION_LIBJPEG_TURBO/libjpeg-turbo-$VERSION_LIBJPEG_TURBO.tar.gz
 curl -OL https://github.com/libgd/libgd/releases/download/gd-$VERSION_LIBGD/libgd-$VERSION_LIBGD.tar.gz
 curl -OL https://cpan.metacpan.org/authors/id/E/ET/ETJ/PDL-IO-GD-$VERSION_PDL_IO_GD.tar.gz
 # Dropbox now returns an HTML preview page for the bare URL; the ?dl=1
@@ -334,21 +338,36 @@ cd ..
 cpan -i GSB/Astro-FITS-Header-$VERSION_ASTRO_FITS_HEADER.tar.gz
 
 
+echo  +++++++++++++++++++++++++++++ Install libjpeg-turbo  +++++++++++++++++++++++++++++
+
+# libjpeg-turbo built statically into /Applications/PDL/lib/libjpeg.a so
+# that libgd (next) can be configured with JPEG support. Homebrew only ships
+# libjpeg as a dylib so we have to do this ourselves.
+tar xvf libjpeg-turbo-$VERSION_LIBJPEG_TURBO.tar.gz
+mkdir libjpeg-turbo-$VERSION_LIBJPEG_TURBO/build
+cd libjpeg-turbo-$VERSION_LIBJPEG_TURBO/build
+cmake -DENABLE_SHARED=0 -DENABLE_STATIC=1 -DCMAKE_INSTALL_PREFIX=/Applications/PDL ..
+make
+make install
+cd ../..
+
+
 echo  +++++++++++++++++++++++++++++ Install libgd  +++++++++++++++++++++++++++++
 
-# libgd for PDL::IO::GD. Built static + PNG-only (the only image format
-# needed by PDL::IO::GD's tests; jpeg/tiff/freetype/etc. would all need
-# their own static libs which Homebrew doesn't provide).
+# libgd for PDL::IO::GD. Built static with PNG + JPEG support (the formats
+# we have static libs for - tiff/webp/freetype etc. would need their own
+# static libs and add lots of size for niche features).
 #
-# Note libgd.a alone is incomplete - it has unresolved libpng symbols.
-# We link in /opt/homebrew/lib/libpng.a manually when re-linking PDL::IO::GD's
-# bundle below (same pattern as PGPLOT/Slatec/Minuit static re-links).
+# Note libgd.a alone is incomplete - it has unresolved libpng/libjpeg
+# symbols. We link those in manually when re-linking PDL::IO::GD's bundle
+# below (same pattern as PGPLOT/Slatec/Minuit static re-links).
 tar xvf libgd-$VERSION_LIBGD.tar.gz
 cd libgd-$VERSION_LIBGD
 ./configure \
   --enable-static --disable-shared \
   --with-png=/opt/homebrew --with-zlib \
-  --without-jpeg --without-tiff --without-webp --without-freetype \
+  --with-jpeg=/Applications/PDL \
+  --without-tiff --without-webp --without-freetype \
   --without-fontconfig --without-raqm --without-x \
   --prefix=/Applications/PDL
 make
@@ -521,19 +540,19 @@ echo "+++++++++++++++++++++++++++++ Install PDL::IO::GD (uses bundled libgd) +++
 
 # PDL::IO::GD needs the libgd we built above. Its Makefile.PL respects
 # GD_LIBS/GD_INC env vars to find an out-of-tree libgd. After the normal
-# 'make', we manually re-link the GD.bundle to add /opt/homebrew/lib/libpng.a
-# directly - libgd.a depends on libpng symbols but EUMM's LIBS-parsing
-# silently strips absolute .a paths so we can't get -lpng on the link line
+# 'make', we manually re-link the GD.bundle to add libpng.a and libjpeg.a
+# directly - libgd.a depends on those symbols but EUMM's LIBS-parsing
+# silently strips absolute .a paths so we can't get them on the link line
 # via Makefile.PL. Same pattern as the PGPLOT/Slatec/Minuit re-links.
 tar xvf PDL-IO-GD-$VERSION_PDL_IO_GD.tar.gz
 cd PDL-IO-GD-$VERSION_PDL_IO_GD
 GD_LIBS=/Applications/PDL/lib GD_INC=/Applications/PDL/include perl Makefile.PL
 make
-# Manual re-link of the GD bundle to pull in libpng statically.
+# Manual re-link of the GD bundle to pull in libpng + libjpeg statically.
 gcc -mmacosx-version-min=12.7 -bundle -undefined dynamic_lookup -fstack-protector-strong \
    GD.o \
    -o blib/arch/auto/PDL/IO/GD/GD.bundle \
-   /Applications/PDL/lib/libgd.a /opt/homebrew/lib/libpng.a -lz -lm
+   /Applications/PDL/lib/libgd.a /opt/homebrew/lib/libpng.a /Applications/PDL/lib/libjpeg.a -lz -lm
 make test
 make install
 cd ..

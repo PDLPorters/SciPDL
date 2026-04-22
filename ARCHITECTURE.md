@@ -6,19 +6,67 @@ SciPDL is a drag-and-drop macOS installer (.dmg) for PDL (Perl Data Language). I
 
 The core problem: scientists need PDL to "just work" on macOS without compiling dependencies. No package manager, no Xcode, no Homebrew required (except an X11 server for PGPLOT graphics). Every hack in this repo exists because an upstream project assumes shared libraries or system paths.
 
-## Component Stack (v2.093)
+## Component Stack (v2.104)
+
+### C libraries (built from source, statically linked)
 
 | Component | Version | Purpose |
 |---|---|---|
-| Perl | 5.40.0 | Private install (not system perl) |
-| PDL | 2.093 | Perl Data Language |
+| Perl | 5.42.2 | Private install (not system perl) |
 | PGPLOT | 5.3.1 + Perl 2.35 | Fortran plotting library + Perl bindings |
 | GSL | 2.8 | GNU Scientific Library |
-| CFITSIO | 4.5.0 | FITS file I/O (astronomy) |
-| Astro::FITS::CFITSIO | 1.18 | Perl CFITSIO bindings |
-| Astro::FITS::Header | 3.09 | FITS header handling |
-| FFTW | 3.3.10 + PDL::FFTW3 0.20 | Fast Fourier Transforms (built twice: double and single precision) |
-| ExtUtils::F77 | 1.26 | Fortran linking support for Perl |
+| CFITSIO | 4.6.3 | FITS file I/O (astronomy) |
+| FFTW | 3.3.11 | Fast Fourier Transforms (built twice: double and single precision) |
+| libgd | 2.3.3 | Graphics library (PNG + JPEG enabled, others disabled) |
+| libjpeg-turbo | 3.1.4.1 | JPEG codec (so libgd can do JPEG) |
+
+### Core PDL family
+
+| Component | Version | Notes |
+|---|---|---|
+| PDL | 2.104 | The latest as of April 2026 |
+| PDL::FFTW3 | 0.203 | Couples to PDL ≥ 2.097 |
+| PDL::Minuit | 0.002 | Fortran, manual re-link |
+| PDL::Slatec | 2.098 | Fortran, manual re-link |
+| Astro::FITS::CFITSIO | 1.18 | |
+| Astro::FITS::Header | 3.09 | |
+| ExtUtils::F77 | 1.26 | |
+
+### Split-out PDL modules (post-2.096) — pinned versions
+
+| Component | Version |
+|---|---|
+| PDL::GSL | 2.103 (couples to PDL ≥ 2.104 via inplace->transpose change) |
+| PDL::Complex | 2.011 |
+| PDL::Fit | 2.100 |
+| PDL::Graphics::Limits | 0.03 |
+| PDL::IO::Dicom | 2.098 |
+| PDL::IO::Browser | 0.001 |
+| PDL::Transform::Proj4 | 2.099 (numerical fix for PROJ 9.8+) |
+| PDL::IO::IDL | 2.098 |
+| PDL::Opt::Simplex | 2.097 |
+
+### Issue #4 wishlist (mohawk2's list)
+
+| Component | Version | Notes |
+|---|---|---|
+| PDL::Graphics::Simple | 1.016 | Modern auto-detecting plot frontend |
+| PDL::Graphics::ColorSpace | 0.206 | Color space conversions |
+| PDL::Transform::Color | 1.010 | Color transforms |
+| PDL::Graphics::Gnuplot | 2.032 | **Runtime: gnuplot binary required separately** |
+| PDL::IO::GD | 2.103 | PNG + JPEG (no TIFF/WebP/TTF) |
+
+### Issue #5 user-requested modules (pure-Perl/XS via cpan -i)
+
+DateTime, String::Scanf, Devel::Size, List::Uniq, LWP::UserAgent, Test::Number::Delta, Parallel::ForkManager, PDL::NDBin
+
+### NOT bundled (deliberately)
+
+| Module | Why not |
+|---|---|
+| PDL::IO::HDF | Needs HDF4 (libhdf), awkward static build, low value vs HDF5 |
+| PDL::Graphics::TriD | Needs OpenGL/freeglut, Apple deprecated OpenGL |
+| PDL::Perldl2 | Was silently failing pre-2.096 anyway, deferred |
 
 ## Repo File Map
 
@@ -96,6 +144,52 @@ After all the static linking, Apple's Gatekeeper still needs satisfying:
 3. The `perl` binary gets a special entitlement (`disable-library-validation`) so users can still `cpan install` modules that load unsigned shared libraries
 4. DMG is built with `create-dmg`, signed, and notarised through Apple's servers
 5. A `.tar.gz` is also created for archiving without signature complexities
+
+### 7. Image format library stack (libgd + libjpeg-turbo + libpng)
+
+To ship `PDL::IO::GD` we have to build several C libs ourselves because Homebrew only ships dylibs:
+
+- **libjpeg-turbo 3.1.4.1** — built statically via cmake (`-DENABLE_SHARED=0 -DENABLE_STATIC=1`), installed into `/Applications/PDL/lib/libjpeg.a`.
+- **libgd 2.3.3** — built with autotools, configured `--with-png=/opt/homebrew --with-jpeg=/Applications/PDL` and `--without-tiff --without-webp --without-freetype --without-fontconfig --without-raqm --without-x` (we have static libs for PNG/JPEG only).
+- **libpng** comes from Homebrew's `/opt/homebrew/lib/libpng.a` (the only Homebrew lib that ships static).
+
+The `PDL::IO::GD` Perl binding gets `GD_LIBS=/Applications/PDL/lib GD_INC=/Applications/PDL/include` env vars on its `perl Makefile.PL` invocation so it finds our libgd.
+
+Then the GD.bundle is **manually re-linked** to add `libpng.a` and `libjpeg.a` (libgd.a alone is incomplete — has unresolved PNG/JPEG symbols). EUMM's LIBS-parser silently strips absolute `.a` paths from `LIBS=...` so we can't get them on the link line via Makefile.PL — hence the manual re-link, same pattern as PGPLOT/Slatec/Minuit:
+
+```bash
+gcc -mmacosx-version-min=12.7 -bundle -undefined dynamic_lookup -fstack-protector-strong \
+   GD.o \
+   -o blib/arch/auto/PDL/IO/GD/GD.bundle \
+   /Applications/PDL/lib/libgd.a /opt/homebrew/lib/libpng.a /Applications/PDL/lib/libjpeg.a -lz -lm
+```
+
+To add WebP/TIFF in the future: build the library statically (cmake or autotools), add `--with-webp=...` to libgd configure, append the static `.a` to the GD.bundle re-link line.
+
+### 8. CPAN ghastly hacks (`install_local_tarballs` helper)
+
+`cpan` (the classic Perl shell tool) is effectively abandoned and has multiple traps that bite when bundling specific module versions:
+
+- **Auto-upgrades PDL.** When asked to install `PDL::GSL::SF` (or any split-out PDL module), CPAN sees PDL listed as a build_requires and "satisfies" it by installing the latest PDL — silently overwriting our carefully-built version.
+- **Mangles local file paths.** `cpan -i /local/path/foo.tar.gz` interprets the path as a partial CPAN identifier and constructs bogus URLs.
+- **Doesn't reliably honour `-M <mirror>`.** Documented but doesn't override the default mirror in practice.
+- **Default mirror drops old versions.** `cpan.org` only keeps the latest of each distro; older versions live on `cpan.metacpan.org` or BackPAN.
+
+The script's solution: a small helper function `install_local_tarballs` which curl-fetches pinned tarballs ahead of time (from `cpan.metacpan.org`) and runs `tar / perl Makefile.PL / make / make test / make install` manually. This bypasses CPAN's prereq resolution entirely.
+
+Used for all the PDL family modules where version pinning matters:
+
+```bash
+install_local_tarballs \
+    PDL-GSL-$VERSION_PDL_GSL \
+    PDL-Complex-$VERSION_PDL_COMPLEX \
+    PDL-Fit-$VERSION_PDL_FIT \
+    ...
+```
+
+For modules with non-trivial CPAN prereq trees (e.g. PDL::NDBin needs Math::Round, Class::Load, Log::Any, Params::Validate, UUID::Tiny), we still use `cpan -i` since those don't trigger PDL upgrades (their PDL constraint is loose, like `>= 2.088`).
+
+Migration to `cpanm` (App::cpanminus) is tracked as a future cleanup — see issue #6. cpanm handles all the above properly: accepts local file paths, doesn't aggressively re-install satisfied prereqs, has `--no-deps` / `--notest` flags, and is the modern community standard. Just not done yet.
 
 ## Build Environment Requirements
 
@@ -241,11 +335,18 @@ A passing test suite is necessary but not sufficient — the build can succeed a
 ```bash
 # The Fortran-heavy bundles — these are the highest-risk for libgfortran/libquadmath leakage
 otool -L /Applications/PDL/lib/perl5/site_perl/*/darwin-2level/auto/PDL/Minuit/Minuit.bundle
-otool -L /Applications/PDL/lib/perl5/site_perl/*/darwin-2level/auto/PDL/Slatec/Slatec.bundle  # if present
+otool -L /Applications/PDL/lib/perl5/site_perl/*/darwin-2level/auto/PDL/Slatec/Slatec.bundle
 otool -L /Applications/PDL/lib/perl5/site_perl/*/darwin-2level/auto/PGPLOT/PGPLOT.bundle
+
+# Manual-relinked bundles where we explicitly merged in static libs
+otool -L /Applications/PDL/lib/perl5/site_perl/*/darwin-2level/auto/PDL/IO/GD/GD.bundle  # libgd + libpng + libjpeg
+otool -L /Applications/PDL/lib/perl5/site_perl/*/darwin-2level/auto/PDL/Transform/Proj4/Proj4.bundle  # Alien::proj/sqlite
 
 # FFTW bundle (C, but links against /Applications/PDL/lib — should be fine)
 otool -L /Applications/PDL/lib/perl5/site_perl/*/darwin-2level/auto/PDL/FFTW3/FFTW3.bundle
+
+# GSL bundles (any of LINALG, INTERP, DIFF, CDF, MROOT, RNG, SF)
+otool -L /Applications/PDL/lib/perl5/site_perl/*/darwin-2level/auto/PDL/GSL/SF/SF.bundle
 
 # The pgplot library itself
 otool -L /Applications/PDL/pgplot/libpgplot.*
