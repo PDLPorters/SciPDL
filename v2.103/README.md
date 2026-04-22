@@ -9,7 +9,7 @@ I have included the source scripts that do all the building FWIW but these will 
 
 ----
 
-*Current version for PDL v2.104, Karl Glazebrook, 22/4/2026 — bump from 2.103 to the current latest PDL. 2.104 brings substantial new features: `PDL::Guide::NumPy` documentation, new `t_quartic` Transform, `MatrixOps::tritosym`/`gurney`, `MatrixOps::svd` full SVD on request, generalised `t_projective` to any number of dimensions, error on `$pdl->inplace->transpose` (which forced a bump of PDL::GSL 2.096→2.103 since its old test used that pattern).*
+*Current version for PDL v2.103, Karl Glazebrook, 22/4/2026 — small bump from 2.101 (skipped 2.102 which was superseded by 2.103 the same day). 2.102 tidied `perldl` apropos/usage output. 2.103 fixed a regression in `*linvals` accepting ndarrays as start/end parameters.*
 
 Welcome to SciPDL! SciPDL is a drag and drop installer for PDL on the Mac. SciPDL now includes its own version of perl in order to work across multiple versions of Mac OS X and a variety of environments (note old versions used the system perl which led to instability between OS updates).
 
@@ -92,7 +92,7 @@ The `pgplot` graphics library libpgplot is installed in `/Applications/PDL/pgplo
 The current version numbers of the important stuff within SciPDL are:
 
 ```
-VERSION_PDL=2.104
+VERSION_PDL=2.103
 VERSION_PERL=5.42.2
 VERSION_PGPLOT=2.35
 VERSION_EXTUTILS_F77=1.26
@@ -104,7 +104,7 @@ VERSION_FFTW=3.3.10
 VERSION_PDL_FFTW3=0.203
 VERSION_PDL_MINUIT=0.002
 VERSION_PDL_SLATEC=2.098
-VERSION_PDL_GSL=2.103
+VERSION_PDL_GSL=2.096
 VERSION_PDL_COMPLEX=2.011
 VERSION_PDL_FIT=2.097
 VERSION_PDL_GRAPHICS_LIMITS=0.03

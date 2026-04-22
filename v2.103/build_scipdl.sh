@@ -99,7 +99,7 @@ cd ~/Downloads/build
 
 echo +++++++++++++++++++++++++++++ Fetch Sources  +++++++++++++++++++++++++++++
 
-VERSION_PDL=2.104
+VERSION_PDL=2.103
 VERSION_PERL=5.42.2
 VERSION_PGPLOT=2.35
 VERSION_EXTUTILS_F77=1.26
@@ -117,7 +117,7 @@ VERSION_PDL_SLATEC=2.098
 # prevent CPAN's prereq resolution from transitively upgrading PDL itself.
 # All specify a minimum PDL version of 2.094 or 2.095, which is satisfied
 # by any PDL 2.094+.
-VERSION_PDL_GSL=2.103  # 2.103 fixes test using $x->inplace->transpose, now an error in PDL 2.104+
+VERSION_PDL_GSL=2.096
 VERSION_PDL_COMPLEX=2.011
 VERSION_PDL_FIT=2.097
 VERSION_PDL_GRAPHICS_LIMITS=0.03
