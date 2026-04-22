@@ -99,7 +99,7 @@ cd ~/Downloads/build
 
 echo +++++++++++++++++++++++++++++ Fetch Sources  +++++++++++++++++++++++++++++
 
-VERSION_PDL=2.103
+VERSION_PDL=2.101
 VERSION_PERL=5.42.2
 VERSION_PGPLOT=2.35
 VERSION_EXTUTILS_F77=1.26
