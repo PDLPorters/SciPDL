@@ -44,6 +44,21 @@ Before bumping the PDL version (e.g. 2.104 → 2.105), first create a snapshot o
 
 Existing examples: `v2.088/`, `v2.093/`, `v2.095/` through `v2.103/`. Rule of thumb: if it changed for this release, snapshot it.
 
+### **ALWAYS update the version tables in README.md when versions change**
+
+`README.md` has two tables (under "Perl module versions") listing every bundled Perl module and every bundled C/Fortran library with their version numbers. **These tables must be kept in sync with the `VERSION_*` variables in `build_scipdl.sh`** — they're the user-facing record of what's in each release.
+
+When you bump ANY version in `build_scipdl.sh` (PDL, Perl, GSL, CFITSIO, FFTW, libgd, libjpeg-turbo, any of the `VERSION_PDL_*` vars, etc.), also:
+
+1. Update the corresponding row in the relevant README.md table
+2. Update the version line at the top of README.md (`*Current version for PDL vX.YYY, Karl Glazebrook, DD/M/YYYY*`)
+3. Update `README_dmg.rtfd/TXT.rtf` (the inside-the-DMG readme) — title, date line, "is built on" line, and `f4 PDL X.YYY` block. The `VERSION_*` table inside the RTF is abbreviated and stale; ignore it OR keep it minimally synced.
+4. Update `go_dmg`'s `version=...` line so the resulting `.dmg` filename matches.
+
+Do this BEFORE committing the version bump. Easy to forget; just as easy to remember.
+
+Same applies if a NEW component gets added (like libjpeg-turbo did in v2.104) — add a new row to the tables.
+
 ### Always consult the PDL Changes file before a version bump
 
 PDL has frequent breaking changes — modules get split into separate distributions, APIs get renamed, build system assumptions shift. Before bumping `VERSION_PDL` in `build_scipdl.sh`, fetch and review:
@@ -95,6 +110,7 @@ The `cpan` shell tool has been effectively abandoned for serious work in favour 
 - Anaconda must be deactivated (`conda deactivate`) — script refuses to run if `$CONDA_PREFIX` is set.
 - Karl has `PERL5DB` and `PERL5LIB` set in his shell profile for his own perl development; the build script `unset`s these to avoid interference.
 - The build script supports `--clean` (interactive prompt) and `--force-clean` (no prompt, for scripted runs) to nuke `/Applications/PDL` and `~/Downloads/build` before starting.
+- **Pre-build prerequisite: `brew install gnuplot`** so Alien::Gnuplot finds a system gnuplot (current 6.x) at install time and skips its own download of broken-on-macOS gnuplot 5.4. Without this, PDL::Graphics::Gnuplot's tests crash on graphical-terminal selection. See "PDL::Graphics::Gnuplot" notes in the bundled modules section below.
 
 ### Running from non-TTY environments (e.g. Claude Code's Bash tool)
 
@@ -134,7 +150,7 @@ When launching builds via Claude's Bash tool with `run_in_background=true`, the 
 - PDL::Graphics::Simple 1.016 (modern auto-detecting plot frontend)
 - PDL::Graphics::ColorSpace 0.206
 - PDL::Transform::Color 1.010
-- PDL::Graphics::Gnuplot 2.032 (**runtime requires `gnuplot` binary** — user installs separately, e.g. via Homebrew)
+- PDL::Graphics::Gnuplot 2.032 (**runtime requires `gnuplot` binary** — user installs separately, any method/location works because Alien::Gnuplot does runtime PATH search if its build-time cached path is unavailable)
 - PDL::IO::GD 2.103 (PNG + JPEG; not TIFF/WebP/TTF)
 
 ### Issue #5 user-requested modules (pure Perl/XS via cpan -i)
@@ -145,8 +161,8 @@ When launching builds via Claude's Bash tool with `run_in_background=true`, the 
 ### Deliberately NOT bundled
 - **PDL::IO::HDF** — needs HDF4 (libhdf), awkward static build, value debatable now most science uses HDF5/NetCDF
 - **PDL::Graphics::TriD** — needs OpenGL/freeglut. Apple deprecated OpenGL years ago, slated for eventual removal
-- **PDL::Perldl2** — alternative shell, was silently failing to install in pre-2.096 builds anyway, deferred
-- **`gnuplot` binary itself** — runtime dep of PDL::Graphics::Gnuplot but bundling it would mean compiling gnuplot statically with all its terminal backends, separate project
+- **PDL::Perldl2** — provides an alternate `pdl2` Perl shell, but pulls in `Devel::REPL` and a tree of Moose-related deps. The classic `perldl` shell (which the `pdl` C-trampoline binary execs) works fine. There's a venerable wart in `perldl` where typing literal `exit` skips the savehist call (typing `quit` or Ctrl-D works); this has nothing to do with whether Perldl2 is installed. Older SciPDL DMGs (pre-2.094) didn't bundle Devel::REPL either, so `pdl2` always fell back to `perldl` on those — we're matching long-standing behaviour.
+- **`gnuplot` binary itself** — runtime dep of PDL::Graphics::Gnuplot. Bundling would mean compiling gnuplot statically with all its terminal backends — separate project. Note: Alien::Gnuplot used to download/bundle a (broken on macOS) gnuplot 5.4 if no system gnuplot was present at install time. We avoid this by ensuring `brew install gnuplot` is done BEFORE running `build_scipdl.sh`. End users without their own gnuplot will get a "no gnuplot found" error from PDL::Graphics::Gnuplot at runtime — they can `brew install gnuplot` (or any other method) and it'll work, no rebuild needed.
 - **JPEG TTF text rendering in libgd** (`gdImageStringTTF`) — would need static FreeType + HarfBuzz + ICU, not worth it for one rarely-used function
 
 ## The libgd/libjpeg-turbo pattern (for future image format additions)

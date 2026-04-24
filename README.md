@@ -9,7 +9,7 @@ I have included the source scripts that do all the building FWIW but these will 
 
 ----
 
-*Current version for PDL v2.104, Karl Glazebrook, 22/4/2026 — bump from 2.103 to the current latest PDL. 2.104 brings substantial new features: `PDL::Guide::NumPy` documentation, new `t_quartic` Transform, `MatrixOps::tritosym`/`gurney`, `MatrixOps::svd` full SVD on request, generalised `t_projective` to any number of dimensions, error on `$pdl->inplace->transpose` (which forced a bump of PDL::GSL 2.096→2.103 since its old test used that pattern).*
+*Current version for PDL v2.104, Karl Glazebrook, 23/4/2026.*
 
 Welcome to SciPDL! SciPDL is a drag and drop installer for PDL on the Mac. SciPDL now includes its own version of perl in order to work across multiple versions of Mac OS X and a variety of environments (note old versions used the system perl which led to instability between OS updates).
 
@@ -89,34 +89,49 @@ The `pgplot` graphics library libpgplot is installed in `/Applications/PDL/pgplo
 
 # Perl module versions
 
-The current version numbers of the important stuff within SciPDL are:
+<!-- MAINTAINER NOTE: keep these tables in sync with the VERSION_* vars
+     in build_scipdl.sh. When you bump any version there, update the row
+     here too. Also update the date line at the top of this README, the
+     RTF readme inside README_dmg.rtfd/, and the version= line in go_dmg.
+     See CLAUDE.md for the full update checklist. -->
 
-```
-VERSION_PDL=2.104
-VERSION_PERL=5.42.2
-VERSION_PGPLOT=2.35
-VERSION_EXTUTILS_F77=1.26
-VERSION_GSL=2.8
-VERSION_CFITSIO=4.6.3
-VERSION_ASTRO_FITSIO=1.18
-VERSION_ASTRO_FITS_HEADER=3.09
-VERSION_FFTW=3.3.11
-VERSION_PDL_FFTW3=0.203
-VERSION_PDL_MINUIT=0.002
-VERSION_PDL_SLATEC=2.098
-VERSION_PDL_GSL=2.103
-VERSION_PDL_COMPLEX=2.011
-VERSION_PDL_FIT=2.100
-VERSION_PDL_GRAPHICS_LIMITS=0.03
-VERSION_PDL_IO_DICOM=2.098
-VERSION_PDL_IO_BROWSER=0.001
-VERSION_PDL_TRANSFORM_PROJ4=2.099
-VERSION_PDL_IO_IDL=2.098
-VERSION_PDL_OPT_SIMPLEX=2.097
-VERSION_PDL_NDBIN=0.029
-```
+SciPDL bundles **PDL 2.104** (with **Perl 5.42.2** as its private interpreter), plus the following Perl modules. Many of these used to be part of PDL itself but were split out into separate CPAN distributions in PDL v2.094 (`PDL::Minuit`) and v2.096 (the larger split). SciPDL re-bundles them as part of the "kitchen sink".
 
-Note that as of PDL v2.094, `PDL::Minuit` was split out from PDL core into a separate CPAN distribution. As of v2.098, many more modules were split out (`PDL::Slatec`, `PDL::GSL::*`, `PDL::Complex`, `PDL::Fit::Gaussian`, `PDL::Graphics::Limits`, `PDL::IO::Dicom`, `PDL::IO::Browser`, `PDL::Transform::Proj4`). SciPDL bundles all of these as part of the "kitchen sink".
+| Module | Version | What it does |
+|---|---|---|
+| `PGPLOT` | 2.35 | Perl bindings to the PGPLOT plotting library |
+| `PDL::FFTW3` | 0.203 | Fast Fourier Transforms (single + double precision) |
+| `PDL::Minuit` | 0.002 | CERN MINUIT minimisation/fitting |
+| `PDL::Slatec` | 2.098 | SLATEC numerical library (linfit, polyfit, SVD, etc.) |
+| `PDL::GSL` | 2.103 | GNU Scientific Library bindings (special functions, CDFs, RNG, etc.) |
+| `PDL::Complex` | 2.011 | Complex number support (alongside PDL native complex) |
+| `PDL::Fit::Gaussian` | 2.100 | Gaussian curve fitting |
+| `PDL::Graphics::Limits` | 0.03 | Plot limit helpers |
+| `PDL::Graphics::Simple` | 1.016 | Modern plotting frontend (auto-detects PGPLOT/gnuplot/etc.) |
+| `PDL::Graphics::ColorSpace` | 0.206 | Colour space conversions |
+| `PDL::Graphics::Gnuplot` | 2.032 | gnuplot interface (requires `gnuplot` binary, install separately) |
+| `PDL::Transform::Color` | 1.010 | Colour transforms |
+| `PDL::Transform::Proj4` | 2.099 | Cartographic projections (PROJ.4) |
+| `PDL::IO::Dicom` | 2.098 | Medical imaging (DICOM format) |
+| `PDL::IO::Browser` | 0.001 | Interactive ndarray browser |
+| `PDL::IO::IDL` | 2.098 | IDL save file reader |
+| `PDL::IO::GD` | 2.103 | Image I/O via libgd (PNG, JPEG, GIF, WBMP) |
+| `PDL::Opt::Simplex` | 2.097 | Simplex optimisation |
+| `PDL::NDBin` | 0.029 | N-dimensional binning |
+| `Astro::FITS::CFITSIO` | 1.18 | Perl bindings to NASA's CFITSIO library |
+| `Astro::FITS::Header` | 3.09 | FITS header handling |
+| `ExtUtils::F77` | 1.26 | Build-time helper for linking Fortran into Perl modules |
+
+The underlying C/Fortran libraries are also bundled (statically linked into the relevant Perl modules):
+
+| Library | Version | Used by |
+|---|---|---|
+| PGPLOT (cpgplot) | 5.3.1 | the `PGPLOT` Perl module |
+| GSL | 2.8 | `PDL::GSL` |
+| CFITSIO | 4.6.3 | `Astro::FITS::CFITSIO` |
+| FFTW | 3.3.11 | `PDL::FFTW3` (built twice — single + double precision) |
+| libgd | 2.3.3 | `PDL::IO::GD` |
+| libjpeg-turbo | 3.1.4.1 | bundled into `libgd` for JPEG support |
 
 The following additional Perl modules are also bundled (added per [issue #5](../../issues/5)):
 

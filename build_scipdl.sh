@@ -348,6 +348,7 @@ mkdir libjpeg-turbo-$VERSION_LIBJPEG_TURBO/build
 cd libjpeg-turbo-$VERSION_LIBJPEG_TURBO/build
 cmake -DENABLE_SHARED=0 -DENABLE_STATIC=1 -DCMAKE_INSTALL_PREFIX=/Applications/PDL ..
 make
+ctest                  # 332 tests, ~50 sec - sanity-checks the JPEG codec
 make install
 cd ../..
 
@@ -371,6 +372,7 @@ cd libgd-$VERSION_LIBGD
   --without-fontconfig --without-raqm --without-x \
   --prefix=/Applications/PDL
 make
+make check             # 171 tests (~169 PASS, 2 SKIP) - sanity-checks libgd
 make install
 cd ..
 
@@ -486,6 +488,14 @@ echo "+++++++++++++++++++++++++++++ Install split-out PDL modules (kitchen sink)
 #                        OpenGL framework, slated for eventual removal)
 # (PDL::IO::GD IS bundled now - libgd is built statically above and the
 # binding is installed in its own section after the split-out modules.)
+#
+# PDL::Perldl2 is NOT bundled. It provides an alternate `pdl2` shell that
+# would require also bundling Devel::REPL and friends. The classic `perldl`
+# shell (which `pdl` falls back to) works fine for command history etc;
+# its only wart is that typing literal `exit` skips the savehist call -
+# typing `quit` or Ctrl-D works correctly. Older SciPDL DMGs (pre-2.094)
+# never had Devel::REPL bundled either, so pdl2 always fell back to
+# perldl on those - we're matching that long-standing behaviour.
 # Alien::proj is needed by PDL::Transform::Proj4 (it builds and ships a
 # private libproj.dylib under /Applications/PDL). Install via cpan since
 # it's a regular CPAN module that doesn't trigger a PDL upgrade.
