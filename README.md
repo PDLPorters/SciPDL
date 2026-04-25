@@ -5,7 +5,7 @@ The main purpose of this is to hold the releases, so please download a [release.
 
 These are `.dmg` files that you double click to open and then do a drag and drop to install PDL.
 
-I have included the source scripts that do all the building FWIW but these will probably only work on my Mac. But good luck if you want to play with this!
+I have included the source scripts that do all the building FWIW but these will probably only work on my Mac. But good luck if you want to play with this — see [`BUILDING.md`](BUILDING.md) for the step-by-step setup guide.
 
 ----
 
@@ -154,7 +154,7 @@ In the latest releases I have found a way to give the perl binary a library load
 
 The repo contains the various scripts and bits I use to build the DMG.
 
-`build_scipdl.sh` is a shell script that builds SciPDL in /Applications/PDL on a Mac (well my Mac) from sources. Run with `--clean` to nuke `/Applications/PDL` and `~/Downloads/build` before starting (with a confirmation prompt), or `--force-clean` to do the same without prompting (for scripted/automated builds).
+`build_scipdl.sh` is a shell script that builds SciPDL in /Applications/PDL on a Mac (well my Mac) from sources. Run with `--clean` to nuke `/Applications/PDL` and `~/Downloads/build` before starting (with a confirmation prompt), or `--force-clean` to do the same without prompting (for scripted/automated builds). **See [`BUILDING.md`](BUILDING.md) for a full step-by-step guide to setting up the build environment and producing a release DMG.**
 
 `go_dmg` is a shell script that builds the DMG file and signs/notarises it
 
@@ -171,6 +171,8 @@ The repo contains the various scripts and bits I use to build the DMG.
 `go_pdl` is a shell script that launches an interactive PDL session that the above Applescripts use.
 
 `patches/` is a folder containing various patches I need to build stuff for SciPDL.
+
+`BUILDING.md` is the step-by-step guide for maintainers (or curious souls) who want to build SciPDL from source on their own Mac. Covers prerequisites (Homebrew packages, gcc/gfortran from fxcoudert's installer, Apple Developer cert setup if you want to sign and notarise a DMG), running the build script, and producing the final installer.
 
 `ARCHITECTURE.md` documents the build system in detail — component stack, the static linking hacks, build environment requirements, and how to verify build logs and check static linking on the resulting bundles. Useful reading if you want to understand how SciPDL is held together.
 
